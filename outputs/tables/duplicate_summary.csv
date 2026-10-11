@@ -1,0 +1,6 @@
+metric,value,pct_of_rows
+exact duplicate rows (all columns),72353,25.25701040608517
+  of which PortScan,68111,42.85597432832064
+  of which BENIGN,4242,3.3260936042089746
+feature-vectors with conflicting labels (groups),0,
+rows inside conflicting groups,0,0.0

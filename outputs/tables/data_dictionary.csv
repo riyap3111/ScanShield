@@ -1,0 +1,80 @@
+column,dtype,type,group,meaning,non_null,n_unique,min,median,max,role
+Destination Port,int64,numeric (discrete),Port,TCP/UDP port number the flow was sent to (the 'door' being knocked on),286467,14495,0.0,1110.0,65389.0,feature (all_with_port set only; leakage check)
+Flow Duration,int64,numeric (discrete),Timing,Time from first to last packet of the flow (microseconds),286467,64077,-13.0,65.0,119999949.0,feature
+Total Fwd Packets,int64,numeric (discrete),Counts,Packets sent from initiator to responder,286467,384,1.0,1.0,3119.0,feature
+Total Backward Packets,int64,numeric (discrete),Counts,Packets sent from responder back to initiator,286467,486,0.0,1.0,3635.0,feature
+Total Length of Fwd Packets,int64,numeric (discrete),Size,Total payload bytes in forward direction,286467,5326,0.0,2.0,232349.0,feature
+Total Length of Bwd Packets,int64,numeric (discrete),Size,Total payload bytes in backward direction,286467,11163,0.0,6.0,7150819.0,feature
+Fwd Packet Length Max,int64,numeric (discrete),Size,"Forward packet payload size, max (bytes)",286467,2569,0.0,2.0,13929.0,feature
+Fwd Packet Length Min,int64,numeric (discrete),Size,"Forward packet payload size, min (bytes)",286467,123,0.0,2.0,1472.0,feature
+Fwd Packet Length Mean,float64,numeric (continuous),Size,"Forward packet payload size, mean (bytes)",286467,12922,0.0,2.0,3412.938776,feature
+Fwd Packet Length Std,float64,numeric (continuous),Size,"Forward packet payload size, std (bytes)",286467,18232,0.0,0.0,3541.466551,feature
+Bwd Packet Length Max,int64,numeric (discrete),Size,"Backward packet payload size, max (bytes)",286467,2718,0.0,6.0,10136.0,feature
+Bwd Packet Length Min,int64,numeric (discrete),Size,"Backward packet payload size, min (bytes)",286467,352,0.0,6.0,1460.0,feature
+Bwd Packet Length Mean,float64,numeric (continuous),Size,"Backward packet payload size, mean (bytes)",286467,15876,0.0,6.0,2442.523124,feature
+Bwd Packet Length Std,float64,numeric (continuous),Size,"Backward packet payload size, std (bytes)",286467,18464,0.0,0.0,2628.883261,feature
+Flow Bytes/s,float64,numeric (continuous),Rates,Bytes per second over the flow,286452,87365,-193000000.0,125000.0,2070000000.0,feature
+Flow Packets/s,float64,numeric (continuous),Rates,Packets per second over the flow,286467,68847,-2000000.0,30769.23077,3000000.0,feature
+Flow IAT Mean,float64,numeric (continuous),Timing,"Inter-arrival time between packets (flow), mean (microseconds)",286467,68084,-13.0,61.0,98100000.0,feature
+Flow IAT Std,float64,numeric (continuous),Timing,"Inter-arrival time between packets (flow), std (microseconds)",286467,59167,0.0,0.0,84800000.0,feature
+Flow IAT Max,int64,numeric (discrete),Timing,"Inter-arrival time between packets (flow), max (microseconds)",286467,47508,-13.0,65.0,120000000.0,feature
+Flow IAT Min,int64,numeric (discrete),Timing,"Inter-arrival time between packets (flow), min (microseconds)",286467,17089,-13.0,44.0,98100000.0,feature
+Fwd IAT Total,int64,numeric (discrete),Timing,"Inter-arrival time between packets (forward), total (microseconds)",286467,28461,0.0,0.0,120000000.0,feature
+Fwd IAT Mean,float64,numeric (continuous),Timing,"Inter-arrival time between packets (forward), mean (microseconds)",286467,43958,0.0,0.0,120000000.0,feature
+Fwd IAT Std,float64,numeric (continuous),Timing,"Inter-arrival time between packets (forward), std (microseconds)",286467,38411,0.0,0.0,81200000.0,feature
+Fwd IAT Max,int64,numeric (discrete),Timing,"Inter-arrival time between packets (forward), max (microseconds)",286467,28906,0.0,0.0,120000000.0,feature
+Fwd IAT Min,int64,numeric (discrete),Timing,"Inter-arrival time between packets (forward), min (microseconds)",286467,12666,0.0,0.0,120000000.0,feature
+Bwd IAT Total,int64,numeric (discrete),Timing,"Inter-arrival time between packets (backward), total (microseconds)",286467,16441,0.0,0.0,120000000.0,feature
+Bwd IAT Mean,float64,numeric (continuous),Timing,"Inter-arrival time between packets (backward), mean (microseconds)",286467,31064,0.0,0.0,120000000.0,feature
+Bwd IAT Std,float64,numeric (continuous),Timing,"Inter-arrival time between packets (backward), std (microseconds)",286467,28246,0.0,0.0,81300000.0,feature
+Bwd IAT Max,int64,numeric (discrete),Timing,"Inter-arrival time between packets (backward), max (microseconds)",286467,16691,0.0,0.0,120000000.0,feature
+Bwd IAT Min,int64,numeric (discrete),Timing,"Inter-arrival time between packets (backward), min (microseconds)",286467,6312,0.0,0.0,120000000.0,feature
+Fwd PSH Flags,int64,numeric (discrete),Flags,Times PSH flag set in forward packets (identical to SYN Flag Count in this file),286467,2,0.0,0.0,1.0,feature (all-features sets); excluded from reduced set (exact copy)
+Bwd PSH Flags,int64,numeric (discrete),Flags,Times the PSH flag was set in backward packets,286467,1,0.0,0.0,0.0,feature (all-features sets); excluded from reduced set (constant)
+Fwd URG Flags,int64,numeric (discrete),Flags,Times the URG flag was set in forward packets,286467,1,0.0,0.0,0.0,feature (all-features sets); excluded from reduced set (constant)
+Bwd URG Flags,int64,numeric (discrete),Flags,Times the URG flag was set in backward packets,286467,1,0.0,0.0,0.0,feature (all-features sets); excluded from reduced set (constant)
+Fwd Header Length,int64,numeric (discrete),Size,Total bytes of headers in forward packets,286467,965,0.0,40.0,79632.0,feature
+Bwd Header Length,int64,numeric (discrete),Size,Total bytes of headers in backward packets,286467,1079,0.0,20.0,81288.0,feature
+Fwd Packets/s,float64,numeric (continuous),Rates,Forward packets per second,286467,68264,0.0,15625.0,3000000.0,feature
+Bwd Packets/s,float64,numeric (continuous),Rates,Backward packets per second,286467,63349,0.0,14084.50704,2000000.0,feature
+Min Packet Length,int64,numeric (discrete),Size,Smallest packet payload in the flow (bytes),286467,107,0.0,2.0,289.0,feature
+Max Packet Length,int64,numeric (discrete),Size,Largest packet payload in the flow (bytes),286467,3226,0.0,6.0,13929.0,feature
+Packet Length Mean,float64,numeric (continuous),Size,Mean packet payload size (bytes),286467,20635,0.0,3.333333333,1588.0,feature
+Packet Length Std,float64,numeric (continuous),Size,Std. dev. of packet payload size,286467,24733,0.0,3.464101615,2497.019924,feature
+Packet Length Variance,float64,numeric (continuous),Size,Variance of packet payload size,286467,24733,0.0,12.0,6235108.501,feature
+FIN Flag Count,int64,numeric (discrete),Flags,Number of packets with the TCP FIN flag set,286467,2,0.0,0.0,1.0,feature
+SYN Flag Count,int64,numeric (discrete),Flags,Number of packets with the TCP SYN flag set,286467,2,0.0,0.0,1.0,feature
+RST Flag Count,int64,numeric (discrete),Flags,Number of packets with the TCP RST flag set,286467,2,0.0,0.0,1.0,feature
+PSH Flag Count,int64,numeric (discrete),Flags,Number of packets with the TCP PSH flag set,286467,2,0.0,1.0,1.0,feature
+ACK Flag Count,int64,numeric (discrete),Flags,Number of packets with the TCP ACK flag set,286467,2,0.0,0.0,1.0,feature
+URG Flag Count,int64,numeric (discrete),Flags,Number of packets with the TCP URG flag set,286467,2,0.0,0.0,1.0,feature
+CWE Flag Count,int64,numeric (discrete),Flags,Number of packets with the TCP CWE flag set,286467,1,0.0,0.0,0.0,feature (all-features sets); excluded from reduced set (constant)
+ECE Flag Count,int64,numeric (discrete),Flags,Packets with ECE flag (identical to RST Flag Count in this file),286467,2,0.0,0.0,1.0,feature (all-features sets); excluded from reduced set (exact copy)
+Down/Up Ratio,int64,numeric (discrete),Counts,Ratio of backward to forward packets,286467,10,0.0,1.0,124.0,feature
+Average Packet Size,float64,numeric (continuous),Size,Mean size of all packets in the flow,286467,20058,0.0,5.0,2068.0,feature
+Avg Fwd Segment Size,float64,numeric (continuous),Size,Mean forward segment size,286467,12922,0.0,2.0,3412.938776,feature (all-features sets); excluded from reduced set (exact copy)
+Avg Bwd Segment Size,float64,numeric (continuous),Size,Mean backward segment size,286467,15876,0.0,6.0,2442.523124,feature
+Fwd Header Length.1,int64,numeric (discrete),Size,Exact duplicate of Fwd Header Length (CICFlowMeter bug),286467,965,0.0,40.0,79632.0,feature (all-features sets); excluded from reduced set (exact copy)
+Fwd Avg Bytes/Bulk,int64,numeric (discrete),Bulk,Bulk-transfer statistic: forward avg bytes/bulk,286467,1,0.0,0.0,0.0,feature (all-features sets); excluded from reduced set (constant)
+Fwd Avg Packets/Bulk,int64,numeric (discrete),Bulk,Bulk-transfer statistic: forward avg packets/bulk,286467,1,0.0,0.0,0.0,feature (all-features sets); excluded from reduced set (constant)
+Fwd Avg Bulk Rate,int64,numeric (discrete),Bulk,Bulk-transfer statistic: forward avg bulk rate,286467,1,0.0,0.0,0.0,feature (all-features sets); excluded from reduced set (constant)
+Bwd Avg Bytes/Bulk,int64,numeric (discrete),Bulk,Bulk-transfer statistic: backward avg bytes/bulk,286467,1,0.0,0.0,0.0,feature (all-features sets); excluded from reduced set (constant)
+Bwd Avg Packets/Bulk,int64,numeric (discrete),Bulk,Bulk-transfer statistic: backward avg packets/bulk,286467,1,0.0,0.0,0.0,feature (all-features sets); excluded from reduced set (constant)
+Bwd Avg Bulk Rate,int64,numeric (discrete),Bulk,Bulk-transfer statistic: backward avg bulk rate,286467,1,0.0,0.0,0.0,feature (all-features sets); excluded from reduced set (constant)
+Subflow Fwd Packets,int64,numeric (discrete),Counts,Mean forward packets per sub-flow,286467,384,1.0,1.0,3119.0,feature (all-features sets); excluded from reduced set (exact copy)
+Subflow Fwd Bytes,int64,numeric (discrete),Size,Mean forward bytes per sub-flow,286467,5326,0.0,2.0,232349.0,feature (all-features sets); excluded from reduced set (exact copy)
+Subflow Bwd Packets,int64,numeric (discrete),Counts,Mean backward packets per sub-flow,286467,486,0.0,1.0,3635.0,feature (all-features sets); excluded from reduced set (exact copy)
+Subflow Bwd Bytes,int64,numeric (discrete),Size,Mean backward bytes per sub-flow,286467,11163,0.0,6.0,7150819.0,feature (all-features sets); excluded from reduced set (exact copy)
+Init_Win_bytes_forward,int64,numeric (discrete),TCP window,Initial TCP window size sent by initiator (-1 = not observed),286467,2926,-1.0,1024.0,65535.0,feature
+Init_Win_bytes_backward,int64,numeric (discrete),TCP window,Initial TCP window size sent by responder (-1 = not observed),286467,3054,-1.0,0.0,65535.0,feature
+act_data_pkt_fwd,int64,numeric (discrete),Counts,Forward packets carrying at least 1 byte of payload,286467,329,0.0,0.0,2056.0,feature
+min_seg_size_forward,int64,numeric (discrete),Size,Smallest forward segment size observed,286467,11,0.0,24.0,60.0,feature
+Active Mean,float64,numeric (continuous),Active/Idle,"Time flow was active before going idle, mean (microseconds)",286467,20723,0.0,0.0,110000000.0,feature
+Active Std,float64,numeric (continuous),Active/Idle,"Time flow was active before going idle, std (microseconds)",286467,13515,0.0,0.0,70500000.0,feature
+Active Max,int64,numeric (discrete),Active/Idle,"Time flow was active before going idle, max (microseconds)",286467,20484,0.0,0.0,110000000.0,feature
+Active Min,int64,numeric (discrete),Active/Idle,"Time flow was active before going idle, min (microseconds)",286467,16107,0.0,0.0,110000000.0,feature
+Idle Mean,float64,numeric (continuous),Active/Idle,"Time flow was idle before going active, mean (microseconds)",286467,11147,0.0,0.0,120000000.0,feature
+Idle Std,float64,numeric (continuous),Active/Idle,"Time flow was idle before going active, std (microseconds)",286467,13350,0.0,0.0,70500000.0,feature
+Idle Max,int64,numeric (discrete),Active/Idle,"Time flow was idle before going active, max (microseconds)",286467,6300,0.0,0.0,120000000.0,feature
+Idle Min,int64,numeric (discrete),Active/Idle,"Time flow was idle before going active, min (microseconds)",286467,13008,0.0,0.0,120000000.0,feature
+Label,str,categorical (binary),Target,Ground-truth class from CIC: BENIGN or PortScan,286467,2,,,,target

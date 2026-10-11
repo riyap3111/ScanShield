@@ -1,0 +1,6 @@
+| outcome            |   n_flows |   Flow Duration |   Total Fwd Packets |   Total Backward Packets |   Fwd Packet Length Max |   Flow Packets/s |   Init_Win_bytes_forward |   Init_Win_bytes_backward |   Destination Port |
+|:-------------------|----------:|----------------:|--------------------:|-------------------------:|------------------------:|-----------------:|-------------------------:|--------------------------:|-------------------:|
+| FN (scan missed)   |        24 |       1.909e+04 |                   5 |                        0 |                     0   |         262      |              251         |                        -1 |                 80 |
+| FP (false alarm)   |         6 |       2.439e+07 |                   4 |                        0 |                    21.5 |           0.1428 |                4.737e+04 |                        -1 |                443 |
+| TN (benign passed) |     18430 |       3.151e+04 |                   2 |                        2 |                    41   |          89.54   |               62         |                        -1 |                 80 |
+| TP (scan caught)   |     13580 |      50         |                   1 |                        1 |                     2   |           4e+04  |                1.511e+04 |                         0 |               3580 |

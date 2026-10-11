@@ -1,0 +1,82 @@
+feature,decision,train_auc,reason
+Bwd PSH Flags,reduced set: excluded (constant),,Single value in raw file; kept in all-features sets
+Fwd URG Flags,reduced set: excluded (constant),,Single value in raw file; kept in all-features sets
+Bwd URG Flags,reduced set: excluded (constant),,Single value in raw file; kept in all-features sets
+CWE Flag Count,reduced set: excluded (constant),,Single value in raw file; kept in all-features sets
+Fwd Avg Bytes/Bulk,reduced set: excluded (constant),,Single value in raw file; kept in all-features sets
+Fwd Avg Packets/Bulk,reduced set: excluded (constant),,Single value in raw file; kept in all-features sets
+Fwd Avg Bulk Rate,reduced set: excluded (constant),,Single value in raw file; kept in all-features sets
+Bwd Avg Bytes/Bulk,reduced set: excluded (constant),,Single value in raw file; kept in all-features sets
+Bwd Avg Packets/Bulk,reduced set: excluded (constant),,Single value in raw file; kept in all-features sets
+Bwd Avg Bulk Rate,reduced set: excluded (constant),,Single value in raw file; kept in all-features sets
+Fwd Header Length.1,reduced set: excluded (exact copy),,Identical to another column; kept in all-features sets
+Subflow Fwd Packets,reduced set: excluded (exact copy),,Identical to another column; kept in all-features sets
+Subflow Bwd Packets,reduced set: excluded (exact copy),,Identical to another column; kept in all-features sets
+Subflow Fwd Bytes,reduced set: excluded (exact copy),,Identical to another column; kept in all-features sets
+Subflow Bwd Bytes,reduced set: excluded (exact copy),,Identical to another column; kept in all-features sets
+Avg Fwd Segment Size,reduced set: excluded (exact copy),,Identical to another column; kept in all-features sets
+Fwd PSH Flags,reduced set: excluded (exact copy),,Identical to another column; kept in all-features sets
+ECE Flag Count,reduced set: excluded (exact copy),,Identical to another column; kept in all-features sets
+Bwd Packets/s,kept,0.9374748319440271,not redundant
+Fwd Packet Length Mean,kept,0.9309977314593293,not redundant
+Total Length of Fwd Packets,kept,0.9308805837313597,not redundant
+Fwd Packet Length Max,kept,0.9307020587799197,not redundant
+Flow Duration,kept,0.9007084079534187,not redundant
+Packet Length Mean,kept,0.9006876456637681,not redundant
+Flow IAT Max,kept,0.8975235907360181,not redundant
+Average Packet Size,dropped,0.8943936569883262,|r| = 0.993 with kept feature 'Packet Length Mean' (AUC 0.901)
+Flow Packets/s,kept,0.8868767402691153,not redundant
+Fwd Packets/s,dropped,0.8795573342498004,|r| = 0.951 with kept feature 'Flow Packets/s' (AUC 0.887)
+PSH Flag Count,kept,0.8766873722739702,not redundant
+Total Fwd Packets,kept,0.8707600664795319,not redundant
+Fwd IAT Total,dropped,0.8672884430858916,|r| = 0.999 with kept feature 'Flow Duration' (AUC 0.901)
+Fwd IAT Max,dropped,0.8670724635710236,|r| = 0.997 with kept feature 'Flow IAT Max' (AUC 0.898)
+Fwd IAT Mean,kept,0.8670063858870359,not redundant
+Fwd IAT Min,dropped,0.8634874849121927,|r| = 0.966 with kept feature 'Fwd IAT Mean' (AUC 0.867)
+Flow IAT Mean,dropped,0.8505554807755019,|r| = 0.982 with kept feature 'Fwd IAT Mean' (AUC 0.867)
+act_data_pkt_fwd,kept,0.8477106577684097,not redundant
+Max Packet Length,kept,0.8401514831328797,not redundant
+Flow IAT Std,dropped,0.8276422789568942,|r| = 0.953 with kept feature 'Fwd IAT Mean' (AUC 0.867)
+Init_Win_bytes_forward,kept,0.8079763748343993,not redundant
+Bwd Header Length,kept,0.8006674912080709,not redundant
+init_win_bwd_missing,kept,0.7964085364669092,not redundant
+Bwd IAT Total,dropped,0.7913630566736267,|r| = 0.988 with kept feature 'Flow Duration' (AUC 0.901)
+Bwd IAT Max,dropped,0.7911511003055077,|r| = 0.958 with kept feature 'Flow IAT Max' (AUC 0.898)
+Bwd IAT Mean,dropped,0.7910768402061713,|r| = 0.966 with kept feature 'Fwd IAT Mean' (AUC 0.867)
+Bwd IAT Min,kept,0.7893842670613969,not redundant
+min_seg_size_forward,kept,0.7731146121760958,not redundant
+Packet Length Std,dropped,0.7675182338880644,|r| = 0.972 with kept feature 'Max Packet Length' (AUC 0.840)
+Packet Length Variance,kept,0.7675182338880644,not redundant
+Fwd Header Length,dropped,0.7610286083622781,|r| = 0.962 with kept feature 'Total Fwd Packets' (AUC 0.871)
+Total Length of Bwd Packets,dropped,0.7608760186969796,|r| = 0.957 with kept feature 'Bwd Header Length' (AUC 0.801)
+Bwd Packet Length Max,kept,0.7533935697330298,not redundant
+Bwd Packet Length Mean,kept,0.750667535605581,not redundant
+Avg Bwd Segment Size,dropped,0.750667535605581,|r| = 1.000 with kept feature 'Bwd Packet Length Mean' (AUC 0.751)
+init_win_fwd_missing,kept,0.7381971248754633,not redundant
+Fwd Packet Length Min,kept,0.7347026829008936,not redundant
+Total Backward Packets,dropped,0.7329081027691449,|r| = 0.976 with kept feature 'Bwd Header Length' (AUC 0.801)
+Min Packet Length,kept,0.7289071463534043,not redundant
+Flow Bytes/s,kept,0.7186259298877705,not redundant
+Fwd IAT Std,kept,0.6727704647389108,not redundant
+Fwd Packet Length Std,kept,0.660139838315912,not redundant
+Down/Up Ratio,kept,0.6560169032653922,not redundant
+Flow IAT Min,kept,0.647874435514723,not redundant
+ACK Flag Count,kept,0.6369443649088224,not redundant
+Bwd IAT Std,kept,0.6230279879652026,not redundant
+Bwd Packet Length Std,kept,0.6212666274236617,not redundant
+Init_Win_bytes_backward,kept,0.611553087134548,not redundant
+Active Max,kept,0.5837170174398602,not redundant
+Active Mean,kept,0.5837162590205374,not redundant
+Active Min,kept,0.5837136034086421,not redundant
+Idle Max,dropped,0.5834367124322243,|r| = 0.980 with kept feature 'Flow IAT Max' (AUC 0.898)
+Idle Mean,dropped,0.5834336770156494,|r| = 0.975 with kept feature 'Flow IAT Max' (AUC 0.898)
+Idle Min,dropped,0.5834205851510914,|r| = 0.959 with kept feature 'Flow IAT Max' (AUC 0.898)
+Idle Std,kept,0.5552338757301168,not redundant
+Active Std,kept,0.5551091325493451,not redundant
+URG Flag Count,kept,0.5509303148562852,not redundant
+Bwd Packet Length Min,kept,0.535558288007183,not redundant
+SYN Flag Count,kept,0.5239960481199513,not redundant
+FIN Flag Count,kept,0.5046144011158249,not redundant
+RST Flag Count,kept,0.5000639274713778,not redundant
+Destination Port,with_port set only,,Leakage check: scanner's fixed port list may let a model memorise the lab setup
+is_well_known_port,with_port set only (engineered),,Engineered: 1 if destination port < 1024

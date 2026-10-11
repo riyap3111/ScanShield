@@ -1,0 +1,82 @@
+{
+  "rows": 286467,
+  "cols": 79,
+  "PortScan": 158930,
+  "BENIGN": 127537,
+  "dup_rows": 72353,
+  "label_pct": {
+    "PortScan": 55.48,
+    "BENIGN": 44.52
+  },
+  "nan_cells": 15,
+  "inf_cells": 727,
+  "constant_cols": [
+    "Bwd PSH Flags",
+    "Fwd URG Flags",
+    "Bwd URG Flags",
+    "CWE Flag Count",
+    "Fwd Avg Bytes/Bulk",
+    "Fwd Avg Packets/Bulk",
+    "Fwd Avg Bulk Rate",
+    "Bwd Avg Bytes/Bulk",
+    "Bwd Avg Packets/Bulk",
+    "Bwd Avg Bulk Rate"
+  ],
+  "duplicate_cols": [
+    [
+      "Total Fwd Packets",
+      "Subflow Fwd Packets"
+    ],
+    [
+      "Total Backward Packets",
+      "Subflow Bwd Packets"
+    ],
+    [
+      "Total Length of Fwd Packets",
+      "Subflow Fwd Bytes"
+    ],
+    [
+      "Total Length of Bwd Packets",
+      "Subflow Bwd Bytes"
+    ],
+    [
+      "Fwd Packet Length Mean",
+      "Avg Fwd Segment Size"
+    ],
+    [
+      "Fwd PSH Flags",
+      "SYN Flag Count"
+    ],
+    [
+      "Fwd Header Length",
+      "Fwd Header Length.1"
+    ],
+    [
+      "RST Flag Count",
+      "ECE Flag Count"
+    ]
+  ],
+  "conflict_groups": 0,
+  "conflict_rows": 0,
+  "scan_row_range": [
+    1463,
+    279088
+  ],
+  "label_switches_in_row_order": 5006,
+  "distinct_ports": {
+    "BENIGN": 13694,
+    "PortScan": 1000
+  },
+  "monday": {
+    "rows": 529918,
+    "cols": 79,
+    "labels": {
+      "BENIGN": 529918
+    },
+    "dup_rows": 26935,
+    "nan_cells": 64,
+    "inf_cells": 810,
+    "neg_flow_duration": 15,
+    "same_columns_as_portscan": true
+  }
+}

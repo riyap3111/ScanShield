@@ -1,0 +1,2 @@
+rule,duration_max_us,fwd_packets_max,fwd_payload_max_bytes
+Flag as PortScan if Flow Duration <= 500 microseconds AND Total Fwd Packets <= 1 AND Fwd Packet Length Max <= 2 bytes,500,1,2

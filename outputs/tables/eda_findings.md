@@ -1,0 +1,10 @@
+| topic            | finding                                                                                                                                 |
+|:-----------------|:----------------------------------------------------------------------------------------------------------------------------------------|
+| Duration         | Median Flow Duration: PortScan 50 µs vs BENIGN 31,370 µs                                                                                |
+| Packets          | Median fwd/bwd packets: PortScan 1/1 vs BENIGN 2/2                                                                                      |
+| Payload          | Median Fwd Packet Length Max: PortScan 0 bytes vs BENIGN 41 bytes                                                                       |
+| Separability     | 6 features have univariate AUC > 0.90; best is Bwd Packets/s (0.938)                                                                    |
+| Redundancy       | 35 feature pairs have |r| > 0.95                                                                                                        |
+| Ports            | PortScan hits 1,000 distinct ports vs 13,623 for BENIGN; 16.4% of scan flows vs 82.0% of benign go to ports < 1024                      |
+| Tool fingerprint | Init_Win_bytes_forward == 1024 (a window value Nmap commonly uses in raw SYN probes) in 49.6% of PortScan flows vs 0.0% of BENIGN flows |
+| Time             | Scan share per file-order bin ranges 0.0% to 99.4%; scans are concentrated, not spread evenly                                           |

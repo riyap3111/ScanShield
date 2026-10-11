@@ -1,0 +1,37 @@
+feature,why_excluded_from_reduced,univariate_auc,lr_all_coef_rank,lr_all_abs_coef,used_in_tree
+Total Backward Packets,|r| > 0.95,0.7333415564173381,7,-2.8342775555465023,False
+Subflow Bwd Packets,exact copy,,8,-2.8342775555465023,False
+Flow IAT Std,|r| > 0.95,0.8282635937794246,10,1.9980690927925406,False
+Bwd IAT Max,|r| > 0.95,0.791826787051239,11,1.9951755086267031,True
+Fwd IAT Min,|r| > 0.95,0.8642489044724039,12,-1.9677198112242291,False
+Flow IAT Mean,|r| > 0.95,0.8508956556958875,13,-1.941064021810015,False
+Bwd IAT Mean,|r| > 0.95,0.791749178942218,14,1.868561913577684,False
+Subflow Fwd Bytes,exact copy,,18,-1.5894137554911307,True
+Fwd IAT Max,|r| > 0.95,0.8677656441928794,20,1.4734468571039079,False
+Idle Min,|r| > 0.95,0.5833097360511054,21,1.3622336288331982,True
+Total Length of Bwd Packets,|r| > 0.95,0.761344801926003,22,-1.334825952624344,True
+Subflow Bwd Bytes,exact copy,,23,-1.334825952624344,False
+Idle Mean,|r| > 0.95,0.5833231425960631,24,1.2859440356189815,False
+Idle Max,|r| > 0.95,0.5833262148078002,25,1.2704495422365831,False
+Packet Length Std,|r| > 0.95,0.7682666206983315,26,1.21244213676885,True
+Bwd IAT Total,|r| > 0.95,0.7920378694652008,28,1.1349598349189145,False
+Avg Fwd Segment Size,exact copy,,36,-0.9504372870211342,False
+Fwd Header Length,|r| > 0.95,0.7628110801070489,41,0.7433900866127005,False
+Fwd Header Length.1,exact copy,,42,0.7433900866127005,False
+Fwd PSH Flags,exact copy,,45,-0.706122403127127,False
+Fwd IAT Total,|r| > 0.95,0.8679790899743033,50,0.6149571561586766,False
+Subflow Fwd Packets,exact copy,,52,0.5897491823268042,False
+Avg Bwd Segment Size,|r| > 0.95,0.7512095523947434,55,0.4359087602037789,False
+Average Packet Size,|r| > 0.95,0.8953077939690431,60,0.2625284580489135,False
+Fwd Packets/s,|r| > 0.95,0.8798435328859955,64,-0.17027565984502893,False
+ECE Flag Count,exact copy,,68,0.004956844417809297,False
+Bwd PSH Flags,constant,,70,0.0,False
+Bwd URG Flags,constant,,71,0.0,False
+Fwd URG Flags,constant,,72,0.0,False
+Bwd Avg Packets/Bulk,constant,,73,0.0,False
+Fwd Avg Bulk Rate,constant,,74,0.0,False
+Bwd Avg Bulk Rate,constant,,75,0.0,False
+Fwd Avg Packets/Bulk,constant,,76,0.0,False
+Fwd Avg Bytes/Bulk,constant,,77,0.0,False
+CWE Flag Count,constant,,78,0.0,False
+Bwd Avg Bytes/Bulk,constant,,79,0.0,False

@@ -1,0 +1,4 @@
+name,source,allowed_ports,days,start_time,end_time,owner,ticket,expires
+Weekly Nessus vulnerability scan,192.0.2.10/32,1-65535,Sat,01:00,05:00,IT Security,CHG-1042,2027-06-30
+Nmap inventory sweep (network team),192.0.2.20/32,"21,22,23,25,53,80,110,139,143,443,445,3306,3389",Mon-Fri,02:00,03:00,Network Ops,CHG-1043,2027-06-30
+Monitoring health checks,198.51.100.0/28,"80,443",Mon-Sun,00:00,23:59,SRE,CHG-1044,2027-12-31
