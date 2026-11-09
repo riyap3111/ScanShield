@@ -1,9 +1,9 @@
 {
-  "model": "Random Forest",
-  "threshold": 0.9726805399038232,
+  "model": "XGBoost",
+  "threshold": 0.983918309211731,
   "external_benign_flows": 2021250,
-  "external_benign_flagged": 972,
-  "external_benign_fpr": 0.00048089053803339517,
+  "external_benign_flagged": 1038,
+  "external_benign_fpr": 0.0005135435992578849,
   "by_day": [
     {
       "day": "Monday",
@@ -14,18 +14,18 @@
       "benign_fpr": 0.0,
       "within_5pct_ceiling": true,
       "attack_flows": 0,
-      "seconds": 12.020236582999999
+      "seconds": 10.05465675
     },
     {
       "day": "Tuesday",
       "description": "Benign + FTP/SSH brute force, Tue 4 Jul",
       "rows_after_cleaning": 421123,
       "benign_flows": 411979,
-      "benign_flagged": 0,
-      "benign_fpr": 0.0,
+      "benign_flagged": 15,
+      "benign_fpr": 3.640962282058066e-05,
       "within_5pct_ceiling": true,
       "attack_flows": 9144,
-      "seconds": 8.607474625
+      "seconds": 7.425920124999999
     },
     {
       "day": "Wednesday",
@@ -36,7 +36,7 @@
       "benign_fpr": 2.4032222403799014e-06,
       "within_5pct_ceiling": true,
       "attack_flows": 193542,
-      "seconds": 14.181380459000003
+      "seconds": 12.211672708999998
     },
     {
       "day": "Thursday AM",
@@ -47,18 +47,18 @@
       "benign_fpr": 0.0,
       "within_5pct_ceiling": true,
       "attack_flows": 2143,
-      "seconds": 2.721180249999996
+      "seconds": 2.3153526249999956
     },
     {
       "day": "Thursday PM",
       "description": "Benign + infiltration, Thu 6 Jul",
       "rows_after_cleaning": 252437,
       "benign_flows": 252402,
-      "benign_flagged": 971,
-      "benign_fpr": 0.003847037662142138,
+      "benign_flagged": 1022,
+      "benign_fpr": 0.004049096282913765,
       "within_5pct_ceiling": true,
       "attack_flows": 35,
-      "seconds": 4.761643499999998
+      "seconds": 4.160585292
     },
     {
       "day": "Friday AM",
@@ -69,7 +69,7 @@
       "benign_fpr": 0.0,
       "within_5pct_ceiling": true,
       "attack_flows": 1948,
-      "seconds": 3.002680834000003
+      "seconds": 2.6797364160000043
     },
     {
       "day": "Friday PM DDoS",
@@ -80,7 +80,7 @@
       "benign_fpr": 0.0,
       "within_5pct_ceiling": true,
       "attack_flows": 127995,
-      "seconds": 3.657421291999995
+      "seconds": 3.4457727919999996
     }
   ],
   "by_attack": [
@@ -95,8 +95,8 @@
       "day": "Tuesday",
       "attack_type": "SSH-Patator",
       "flows": 3217,
-      "flagged_as_portscan": 0,
-      "flag_rate": 0.0
+      "flagged_as_portscan": 16,
+      "flag_rate": 0.004973577867578489
     },
     {
       "day": "Wednesday",
@@ -109,8 +109,8 @@
       "day": "Wednesday",
       "attack_type": "DoS Hulk",
       "flows": 172642,
-      "flagged_as_portscan": 8,
-      "flag_rate": 4.633866614149512e-05
+      "flagged_as_portscan": 104,
+      "flag_rate": 0.0006024026598394365
     },
     {
       "day": "Wednesday",

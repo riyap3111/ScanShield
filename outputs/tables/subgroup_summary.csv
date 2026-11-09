@@ -1,8 +1,8 @@
 dimension,groups,min,max,spread,ratio,rate
 Service group (destination port),9,0.0,0.0,0.0,inf,false-positive rate
-Service group (destination port),9,0.8888888888888888,1.0,0.11111111111111116,1.125,recall
+Service group (destination port),9,0.9393939393939394,1.0,0.06060606060606055,1.064516129032258,recall
 Flow size,4,0.0,0.0,0.0,inf,false-positive rate
 Flow size,4,0.94,1.0,0.06000000000000005,1.0638297872340425,recall
 Time period (file-order decile),10,0.0,0.0,0.0,inf,false-positive rate
-Time period (file-order decile),10,0.9877300613496932,1.0,0.012269938650306789,1.0124223602484472,recall
-Capture day (data source),7,0.0,0.0038470376621421,0.0038470376621421,inf,false-positive rate
+Time period (file-order decile),10,0.9918200408997955,1.0,0.008179959100204526,1.0082474226804123,recall
+Capture day (data source),7,0.0,0.0040490962829137,0.0040490962829137,inf,false-positive rate

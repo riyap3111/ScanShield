@@ -1,16 +1,16 @@
 feature,contribution,value,alert_score,alert_true_label
-Packet Length Variance,0.08257274519777318,3633940.9,1.0,PortScan
-Bwd Packet Length Std,0.08113790551378734,2181.008184,1.0,PortScan
-Packet Length Std,0.07667291214037564,1906.289826,1.0,PortScan
-download_ratio,0.04492188312653691,610.2631578947369,1.0,PortScan
-Avg Bwd Segment Size,0.026925758726644846,1932.5,1.0,PortScan
-bytes_per_bwd_packet,0.025012740307153516,1932.5,1.0,PortScan
-header_bytes_per_fwd_packet,0.024834553217770845,34.666666666666664,1.0,PortScan
-Average Packet Size,0.024518198774454325,1290.333333,1.0,PortScan
-bwd_pkt_len_range,0.023222591236196775,5792.0,1.0,PortScan
-Bwd Packet Length Max,0.02237969235113894,5792.0,1.0,PortScan
-Bwd Packet Length Mean,0.018343191116412604,1932.5,1.0,PortScan
-pkts_per_sec_ratio,-0.016133896050437906,0.46472612540717084,1.0,PortScan
-Fwd Packet Length Max,0.013429362700888847,18.0,1.0,PortScan
-Max Packet Length,0.012102909929871553,5792.0,1.0,PortScan
-Bwd Packets/s,-0.012021726144997783,13.17479661,1.0,PortScan
+win_ratio,3.530346,29200.0,0.999998,PortScan
+total_bytes,1.4085054,6.0,0.999998,PortScan
+header_bytes_per_fwd_packet,0.9990667,40.0,0.999998,PortScan
+Bwd Packets/s,0.9959441,13698.63014,0.999998,PortScan
+Flow IAT Min,0.871311,73.0,0.999998,PortScan
+Packet Length Mean,0.68283284,2.0,0.999998,PortScan
+Destination Port,0.6645586,99.0,0.999998,PortScan
+ACK Flag Count,0.5644021,0.0,0.999998,PortScan
+Total Length of Fwd Packets,0.5606961,0.0,0.999998,PortScan
+PSH Flag Count,0.5233213,1.0,0.999998,PortScan
+fwd_bwd_packet_ratio,0.43725076,0.5,0.999998,PortScan
+Flow IAT Std,-0.4264737,0.0,0.999998,PortScan
+Fwd Packet Length Mean,0.3839619,0.0,0.999998,PortScan
+pkts_per_sec_ratio,0.3131218,0.9999270053286271,0.999998,PortScan
+Fwd IAT Min,0.27975804,0.0,0.999998,PortScan

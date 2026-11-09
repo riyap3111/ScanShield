@@ -1,8 +1,8 @@
 day,description,rows_after_cleaning,benign_flows,benign_flagged,benign_fpr,within_5pct_ceiling,attack_flows,seconds
-Monday,"All benign, Mon 3 Jul (outside-day control)",502138,502138,0,0.0,True,0,12.020236582999999
-Tuesday,"Benign + FTP/SSH brute force, Tue 4 Jul",421123,411979,0,0.0,True,9144,8.607474625
-Wednesday,"Benign + DoS family + Heartbleed, Wed 5 Jul",609650,416108,1,2.4032222403799014e-06,True,193542,14.181380459000003
-Thursday AM,"Benign + web attacks, Thu 6 Jul",163916,161773,0,0.0,True,2143,2.721180249999996
-Thursday PM,"Benign + infiltration, Thu 6 Jul",252437,252402,971,0.003847037662142138,True,35,4.761643499999998
-Friday AM,"Benign + botnet, Fri 7 Jul morning",183819,181871,0,0.0,True,1948,3.002680834000003
-Friday PM DDoS,"Benign + DDoS, Fri 7 Jul afternoon",222974,94979,0,0.0,True,127995,3.657421291999995
+Monday,"All benign, Mon 3 Jul (outside-day control)",502138,502138,0,0.0,True,0,10.05465675
+Tuesday,"Benign + FTP/SSH brute force, Tue 4 Jul",421123,411979,15,3.640962282058066e-05,True,9144,7.425920124999999
+Wednesday,"Benign + DoS family + Heartbleed, Wed 5 Jul",609650,416108,1,2.4032222403799014e-06,True,193542,12.211672708999998
+Thursday AM,"Benign + web attacks, Thu 6 Jul",163916,161773,0,0.0,True,2143,2.3153526249999956
+Thursday PM,"Benign + infiltration, Thu 6 Jul",252437,252402,1022,0.004049096282913765,True,35,4.160585292
+Friday AM,"Benign + botnet, Fri 7 Jul morning",183819,181871,0,0.0,True,1948,2.6797364160000043
+Friday PM DDoS,"Benign + DDoS, Fri 7 Jul afternoon",222974,94979,0,0.0,True,127995,3.4457727919999996

@@ -189,11 +189,18 @@ def s1_status(doc, c):
         f"Feature engineering, not pruning. Every original CICFlowMeter column is kept and "
         f"{len(c['eng'])} engineered features added on top ({c['fs']['n_full']} inputs): payload "
         f"per packet, reply ratio, flag density, header-to-payload ratio. Section 3 ablates them.",
-        f"Three new families. Random Forest, scikit-learn's histogram gradient boosting and "
-        f"XGBoost (Chen & Guestrin, 2016) joined the baseline, so the proposal's planned "
-        f"candidates are both covered. XGBoost needs an OpenMP runtime Apple does not ship; "
-        f"src/install_libomp.py fetches it from conda-forge and verifies its checksum, so the "
-        f"pipeline reproduces without Homebrew.",
+        (f"Three new families. Random Forest, scikit-learn's histogram gradient boosting and "
+         f"XGBoost (Chen & Guestrin, 2016) joined the baseline, so both candidates named in "
+         f"the proposal are covered. XGBoost needs an OpenMP runtime Apple does not ship; "
+         f"src/install_libomp.py fetches it from conda-forge with a checksum check, so the "
+         f"pipeline reproduces without Homebrew."
+         if "XGBoost" in c["models"] else
+         f"Two new families. Random Forest and gradient-boosted trees joined the baseline. "
+         f"Boosting is scikit-learn's histogram implementation rather than XGBoost (Chen & "
+         f"Guestrin, 2016): XGBoost needs an OpenMP runtime Apple does not ship, and the "
+         f"support for it (src/install_libomp.py, src/xgb_support.py) landed after this "
+         f"report's results were frozen. It is the same boosting family, and it is the only "
+         f"departure from the proposed plan."),
         f"A genuinely held-out test. Threshold and model choice were both fixed on validation; "
         f"the test split was read once afterwards.",
         f"Generalization went well past the Monday control: all seven other CICIDS2017 day "
@@ -212,10 +219,9 @@ def s2_models(doc, c, T):
     tune, cv, cost = c["tune"], c["cv"], c["cost"]
     p = find_paragraph(doc, "[Describe the models")
     write_paragraphs(p, [
-        f"{len(c['models'])} families were compared on identical data — same training split, same "
-        f"{c['fs']['n_full']} features, same protocol — differing in kind, not just in "
-        f"hyperparameters: linear, bagged trees, and two independent boosting implementations. "
-        f"Each got a 15-candidate "
+        f"{len(c['models'])} families were compared on identical data — same training split, "
+        f"same {c['fs']['n_full']} features, same protocol — differing in kind, not just in "
+        f"hyperparameters: linear, bagged trees and boosted trees. Each got a 15-candidate "
         f"randomised search scored by 5-fold stratified CV on the training split only "f"(scikit-learn; Pedregosa et al., 2011). The "
         f"search metric is average precision, not accuracy, which is uninformative when 42.5% "
         f"of rows are positive and the two error types cost differently. Imbalance is handled "
@@ -225,7 +231,8 @@ def s2_models(doc, c, T):
         f"inside the 5% ceiling, then frozen; the winning family is chosen the same way, on "
         f"validation, so neither is informed by test data. Only then was test scored, once. "
         f"Reproducibility rests on seed 42, tuned parameters in Appendix A, and a one-command "
-        f"pipeline; three seeds change recall by {c['seed_recall_std']:.1e}.",
+        f"pipeline; three seeds change recall by {c['seed_recall_std']:.1e}."
+        + _budget_note(c),
     ])
     rows = [["Approach", "Key settings", "Validation method", "Rationale / result"]]
     labels = {"Logistic regression": "Baseline: Logistic regression",
@@ -245,6 +252,20 @@ def s2_models(doc, c, T):
             f"F1 {f5(tv.f1)}. Scores {cost.loc[m, 'flows_scored_per_second']:,.0f} flows/s.",
         ])
     fill_table(T[3], rows, widths=[1.25, 1.55, 1.75, 2.1])
+
+
+def _budget_note(c):
+    """Flag any family that did not get the standard search budget."""
+    n = c["tune"].n_candidates
+    if n.nunique() <= 1:
+        return ""
+    std = int(n.mode().iloc[0])
+    odd = [(m, int(v)) for m, v in n.items() if int(v) != std]
+    parts = ", ".join(f"{m} had {v}" for m, v in odd)
+    return (f" One caveat on the comparison: the search budget was not identical across "
+            f"families. Most had {std} candidates, but {parts}, because it was added to an "
+            f"existing run rather than searched from scratch. Its score is therefore a floor, "
+            f"not a ceiling: a fuller search could only improve it.")
 
 
 def _fmt(v):
@@ -701,8 +722,8 @@ def contributions(doc, c, T):
          "src/13_monitoring.py; tables schema_compatibility, generalization_by_day, "
          "subgroup_*, privacy_governance, drift_psi, alert_volume; figures 13, 15, 16, 17"],
         ["Ojas Prashant Suratkar",
-         "Model development and tuning for all four families including the XGBoost build "
-         "(randomised search, 5-fold CV, "
+         f"Model development and tuning for all {len(c['models'])} families (randomised "
+         "search, 5-fold CV, "
          "class-weight strategy, threshold selection and freezing); evaluation figures and the "
          "structured error analysis; the adversarial threat model, the five evasion attacks and "
          "the adversarial-training defense; the Deliverable 3 results generator; co-wrote the "
@@ -713,8 +734,8 @@ def contributions(doc, c, T):
         ["Both",
          "Joint decisions: keeping every column and adding engineered features on top, the "
          "choice of PR-AUC as the search metric and recall-at-bounded-FPR as the primary "
-         "metric, the threshold rule, and running both boosting implementations rather than "
-         "only one. Each member reviewed and re-ran the other's scripts before merging.",
+         "metric, the threshold rule, and the choice of boosting implementation. Each member "
+         "reviewed and re-ran the other's scripts before merging.",
          "run_all.sh reproduces every output; RESULTS_DELIVERABLE3.md is generated from the "
          "saved tables"],
     ], widths=[1.1, 3.4, 2.15])

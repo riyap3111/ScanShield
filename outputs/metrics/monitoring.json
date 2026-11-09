@@ -1,6 +1,6 @@
 {
-  "model": "Random Forest",
-  "threshold": 0.9726805399038232,
+  "model": "XGBoost",
+  "threshold": 0.983918309211731,
   "psi_bands": {
     "watch": 0.1,
     "investigate": 0.25
@@ -56,10 +56,10 @@
       "day": "Thursday PM",
       "flows_scored": 252437,
       "benign_flows": 252402,
-      "benign_alerts": 971,
-      "alerts": 963,
-      "alerts_per_10k_flows": 38.13333333333333,
-      "median_alert_score": 0.9999984106090551,
+      "benign_alerts": 1022,
+      "alerts": 1006,
+      "alerts_per_10k_flows": 39.86666666666667,
+      "median_alert_score": 0.999982476234436,
       "sampled_flows": 150000,
       "max_feature_psi": 0.23164169727011194
     },
@@ -67,10 +67,10 @@
       "day": "Tuesday",
       "flows_scored": 421123,
       "benign_flows": 411979,
-      "benign_alerts": 0,
-      "alerts": 0,
-      "alerts_per_10k_flows": 0.0,
-      "median_alert_score": NaN,
+      "benign_alerts": 15,
+      "alerts": 34,
+      "alerts_per_10k_flows": 0.8,
+      "median_alert_score": 0.9969732761383057,
       "sampled_flows": 150000,
       "max_feature_psi": 0.542926245087742
     },
@@ -79,15 +79,15 @@
       "flows_scored": 609650,
       "benign_flows": 416108,
       "benign_alerts": 1,
-      "alerts": 8,
-      "alerts_per_10k_flows": 0.13333333333333333,
-      "median_alert_score": 0.9865963295714264,
+      "alerts": 106,
+      "alerts_per_10k_flows": 1.7333333333333334,
+      "median_alert_score": 0.9923405647277832,
       "sampled_flows": 150000,
       "max_feature_psi": 0.018362360244789124
     }
   ],
   "median_alerts_per_day": 0.0,
-  "max_alerts_per_day": 963.0,
-  "quiet_days": 5,
+  "max_alerts_per_day": 1006.0,
+  "quiet_days": 4,
   "n_days": 7
 }

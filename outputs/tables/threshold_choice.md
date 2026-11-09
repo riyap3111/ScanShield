@@ -3,3 +3,4 @@
 | Logistic regression |      0.8027 | max F1 subject to validation FPR <= 5% |         0 |       0.9979 |    0.999 |  5.424e-05 |        0.999  |
 | Random Forest       |      0.9727 | max F1 subject to validation FPR <= 5% |         0 |       0.998  |    0.999 |  0         |        0.9986 |
 | Gradient Boosting   |      1      | max F1 subject to validation FPR <= 5% |         0 |       0.9979 |    0.999 |  0         |        0.9984 |
+| XGBoost             |      0.9839 | max F1 subject to validation FPR <= 5% |         0 |       0.9981 |    0.999 |  0         |        0.999  |

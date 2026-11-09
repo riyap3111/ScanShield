@@ -1,16 +1,16 @@
 {
-  "model": "Random Forest",
-  "threshold": 0.9726805399038232,
+  "model": "XGBoost",
+  "threshold": 0.983918309211731,
   "shap_used": true,
   "overall_test": {
     "flows": 32041,
     "scan_flows": 13604,
     "benign_flows": 18437,
-    "recall": 0.9986033519553073,
+    "recall": 0.9989708909144369,
     "fpr": 0.0,
     "precision": 1.0,
-    "TP": 13585,
-    "FN": 19,
+    "TP": 13590,
+    "FN": 14,
     "FP": 0,
     "TN": 18437
   },
@@ -27,10 +27,10 @@
     {
       "dimension": "Service group (destination port)",
       "groups": 9,
-      "min": 0.8888888888888888,
+      "min": 0.9393939393939394,
       "max": 1.0,
-      "spread": 0.11111111111111116,
-      "ratio": 1.125,
+      "spread": 0.06060606060606055,
+      "ratio": 1.064516129032258,
       "rate": "recall"
     },
     {
@@ -63,112 +63,112 @@
     {
       "dimension": "Time period (file-order decile)",
       "groups": 10,
-      "min": 0.9877300613496932,
+      "min": 0.9918200408997955,
       "max": 1.0,
-      "spread": 0.012269938650306789,
-      "ratio": 1.0124223602484472,
+      "spread": 0.008179959100204526,
+      "ratio": 1.0082474226804123,
       "rate": "recall"
     },
     {
       "dimension": "Capture day (data source)",
       "groups": 7,
       "min": 0.0,
-      "max": 0.0038470376621421,
-      "spread": 0.0038470376621421,
+      "max": 0.0040490962829137,
+      "spread": 0.0040490962829137,
       "ratio": Infinity,
       "rate": "false-positive rate"
     }
   ],
   "top_features": [
     {
-      "feature": "Active Min",
-      "permutation_importance": 8.881784197001253e-17,
+      "feature": "win_ratio",
+      "permutation_importance": 1.7913880563380502e-06,
+      "permutation_std": 1.3663712203772263e-06,
+      "mean_abs_shap": 2.7757997512817383
+    },
+    {
+      "feature": "Destination Port",
+      "permutation_importance": 2.2204460492503132e-17,
       "permutation_std": 4.4408920985006264e-17,
-      "mean_abs_shap": 0.00013079413276058754
+      "mean_abs_shap": 0.6731391549110413
     },
     {
-      "feature": "Idle Min",
-      "permutation_importance": 8.881784197001253e-17,
+      "feature": "Bwd Packet Length Mean",
+      "permutation_importance": 2.2204460492503132e-17,
       "permutation_std": 4.440892098500627e-17,
-      "mean_abs_shap": 0.0005293919090675927
+      "mean_abs_shap": 0.0932098850607872
     },
     {
-      "feature": "is_well_known_port",
-      "permutation_importance": 6.661338147750939e-17,
-      "permutation_std": 5.438959822042074e-17,
-      "mean_abs_shap": 0.0001620290608540194
+      "feature": "PSH Flag Count",
+      "permutation_importance": 2.2204460492503132e-17,
+      "permutation_std": 4.440892098500627e-17,
+      "mean_abs_shap": 0.6728118062019348
     },
     {
-      "feature": "Active Mean",
-      "permutation_importance": 6.661338147750939e-17,
-      "permutation_std": 5.438959822042074e-17,
-      "mean_abs_shap": 0.00014459774543286027
+      "feature": "Packet Length Std",
+      "permutation_importance": 2.2204460492503132e-17,
+      "permutation_std": 4.440892098500627e-17,
+      "mean_abs_shap": 0.05949398875236511
     },
     {
-      "feature": "Idle Max",
-      "permutation_importance": 6.661338147750939e-17,
-      "permutation_std": 5.438959822042074e-17,
-      "mean_abs_shap": 0.00024571044098844195
+      "feature": "Fwd Packets/s",
+      "permutation_importance": 2.2204460492503132e-17,
+      "permutation_std": 4.4408920985006264e-17,
+      "mean_abs_shap": 0.2380252480506897
+    },
+    {
+      "feature": "Fwd Header Length",
+      "permutation_importance": 2.2204460492503132e-17,
+      "permutation_std": 4.4408920985006264e-17,
+      "mean_abs_shap": 0.14402028918266296
+    },
+    {
+      "feature": "Bwd IAT Mean",
+      "permutation_importance": 2.2204460492503132e-17,
+      "permutation_std": 4.4408920985006264e-17,
+      "mean_abs_shap": 0.029128391295671463
     },
     {
       "feature": "Fwd IAT Max",
-      "permutation_importance": 6.661338147750939e-17,
-      "permutation_std": 5.438959822042074e-17,
-      "mean_abs_shap": 0.00257167854633503
+      "permutation_importance": 2.2204460492503132e-17,
+      "permutation_std": 4.440892098500627e-17,
+      "mean_abs_shap": 0.031860221177339554
     },
     {
-      "feature": "Idle Mean",
-      "permutation_importance": 6.661338147750939e-17,
-      "permutation_std": 5.438959822042074e-17,
-      "mean_abs_shap": 0.00011797815391409444
-    },
-    {
-      "feature": "Active Max",
-      "permutation_importance": 6.661338147750939e-17,
-      "permutation_std": 5.438959822042074e-17,
-      "mean_abs_shap": 0.00014470884308621205
-    },
-    {
-      "feature": "Bwd IAT Min",
-      "permutation_importance": 4.4408920985006264e-17,
-      "permutation_std": 5.438959822042074e-17,
-      "mean_abs_shap": 0.0011777113921003287
-    },
-    {
-      "feature": "FIN Flag Count",
-      "permutation_importance": 4.4408920985006264e-17,
-      "permutation_std": 5.438959822042074e-17,
-      "mean_abs_shap": 1.671813851627084e-05
+      "feature": "flags_per_packet",
+      "permutation_importance": 2.2204460492503132e-17,
+      "permutation_std": 4.440892098500627e-17,
+      "mean_abs_shap": 0.08997263759374619
     },
     {
       "feature": "header_to_payload_ratio",
-      "permutation_importance": 4.4408920985006264e-17,
-      "permutation_std": 5.438959822042074e-17,
-      "mean_abs_shap": 0.014324912653074916
+      "permutation_importance": 2.2204460492503132e-17,
+      "permutation_std": 4.4408920985006264e-17,
+      "mean_abs_shap": 0.07976741343736649
     },
     {
-      "feature": "Bwd IAT Max",
-      "permutation_importance": 4.4408920985006264e-17,
-      "permutation_std": 5.438959822042074e-17,
-      "mean_abs_shap": 0.0009608713877968851
+      "feature": "Fwd Header Length.1",
+      "permutation_importance": 2.2204460492503132e-17,
+      "permutation_std": 4.440892098500627e-17,
+      "mean_abs_shap": 0.025511596351861954
     },
     {
-      "feature": "Bwd Packet Length Max",
-      "permutation_importance": 4.4408920985006264e-17,
-      "permutation_std": 5.438959822042074e-17,
-      "mean_abs_shap": 0.0012138564325469086
+      "feature": "pkts_per_sec_ratio",
+      "permutation_importance": 2.2204460492503132e-17,
+      "permutation_std": 4.440892098500627e-17,
+      "mean_abs_shap": 0.5144139528274536
     },
     {
-      "feature": "Average Packet Size",
-      "permutation_importance": 4.4408920985006264e-17,
-      "permutation_std": 5.438959822042074e-17,
-      "mean_abs_shap": 0.014957963713582358
+      "feature": "Total Backward Packets",
+      "permutation_importance": 2.2204460492503132e-17,
+      "permutation_std": 4.440892098500627e-17,
+      "mean_abs_shap": 0.22161123156547546
     },
     {
-      "feature": "Fwd Packet Length Max",
-      "permutation_importance": 4.4408920985006264e-17,
-      "permutation_std": 8.881784197001254e-17,
-      "mean_abs_shap": 0.026651337635677872
+      "feature": "iat_burstiness",
+      "permutation_importance": 0.0,
+      "permutation_std": 0.0,
+      "mean_abs_shap": 0.22500814497470856
     }
   ]
 }

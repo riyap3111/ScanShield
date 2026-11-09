@@ -1,11 +1,11 @@
 day,attack_type,flows,flagged_as_portscan,flag_rate
-Wednesday,DoS Hulk,172642,8,4.633866614149512e-05
+Wednesday,DoS Hulk,172642,104,0.0006024026598394365
 Friday PM DDoS,DDoS,127995,0,0.0
 Wednesday,DoS GoldenEye,10281,0,0.0
 Tuesday,FTP-Patator,5927,0,0.0
 Wednesday,DoS slowloris,5384,0,0.0
 Wednesday,DoS Slowhttptest,5228,0,0.0
-Tuesday,SSH-Patator,3217,0,0.0
+Tuesday,SSH-Patator,3217,16,0.004973577867578489
 Friday AM,Bot,1948,0,0.0
 Thursday AM,Web Attack - Brute Force,1470,0,0.0
 Thursday AM,Web Attack - XSS,652,0,0.0

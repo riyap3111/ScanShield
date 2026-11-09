@@ -115,7 +115,10 @@ def model_space(random_state=RANDOM_STATE):
     if XGB is not None:
         # scale_pos_weight is XGBoost's equivalent of balanced class weights.
         space["XGBoost"] = (
-            XGB.XGBClassifier(tree_method="hist", n_jobs=1, random_state=random_state,
+            # n_jobs=4 here, and the search below runs in-process for XGBoost (see main):
+            # libomp is loaded into THIS process, and joblib's worker subprocesses would each
+            # have to import xgboost themselves, which fails without the preload.
+            XGB.XGBClassifier(tree_method="hist", n_jobs=4, random_state=random_state,
                               eval_metric="aucpr", verbosity=0),
             {"n_estimators": randint(150, 450),
              "max_depth": randint(3, 10),
@@ -194,9 +197,12 @@ def main():
 
     for name, (est, space, rationale) in model_space().items():
         print(f"\n=== {name} ===")
+        # XGBoost cannot be un-pickled in a fresh worker process on this machine, because the
+        # OpenMP runtime is loaded into the parent only. Its own threads give the parallelism.
+        search_jobs = 1 if name == "XGBoost" else N_JOBS
         t0 = time.perf_counter()
         search = RandomizedSearchCV(est, space, n_iter=N_ITER, cv=cv, scoring="average_precision",
-                                    random_state=RANDOM_STATE, n_jobs=N_JOBS, refit=True,
+                                    random_state=RANDOM_STATE, n_jobs=search_jobs, refit=True,
                                     return_train_score=True)
         search.fit(X["train"], y["train"])
         search_s = time.perf_counter() - t0
@@ -215,7 +221,8 @@ def main():
         # 5-fold CV with the tuned configuration -> mean +/- std for several metrics
         scoring = {"pr_auc": "average_precision", "roc_auc": "roc_auc",
                    "recall": "recall", "precision": "precision", "f1": "f1"}
-        cvres = cross_validate(best, X["train"], y["train"], cv=cv, scoring=scoring, n_jobs=N_JOBS)
+        cvres = cross_validate(best, X["train"], y["train"], cv=cv, scoring=scoring,
+                               n_jobs=search_jobs)
         row = {"model": name}
         for k in scoring:
             v = cvres[f"test_{k}"]
@@ -225,7 +232,7 @@ def main():
         print("  CV " + "  ".join(f"{k}={row[k+'_mean']:.5f}+/-{row[k+'_std']:.5f}" for k in scoring))
 
         # refit timing on the full training split, then the frozen operating point
-        if hasattr(best, "n_jobs"):
+        if hasattr(best, "n_jobs") and name != "XGBoost":
             best.set_params(n_jobs=N_JOBS)
         t0 = time.perf_counter(); best.fit(X["train"], y["train"]); fit_s = time.perf_counter() - t0
         sval = scores_of(best, X["val"])

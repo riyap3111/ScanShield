@@ -1,41 +1,41 @@
 {
-  "model": "Random Forest",
-  "threshold": 0.9726805399038232,
+  "model": "XGBoost",
+  "threshold": 0.983918309211731,
   "test_scan_flows": 13604,
   "baseline": [
     {
       "attack": "A0 No attack (clean scan flows)",
       "realisation": "Reference: the scan flows exactly as captured",
-      "recall_under_attack": 0.9986033519553073,
-      "evasion_rate": 0.0013966480446927498,
+      "recall_under_attack": 0.9989708909144369,
+      "evasion_rate": 0.0010291090855630847,
       "scan_flows": 13604
     },
     {
       "attack": "A1 Timing evasion, 10x slower",
       "realisation": "nmap -T2: probes spaced out by an order of magnitude",
-      "recall_under_attack": 0.771023228462217,
-      "evasion_rate": 0.22897677153778295,
+      "recall_under_attack": 0.980005880623346,
+      "evasion_rate": 0.019994119376653963,
       "scan_flows": 13604
     },
     {
       "attack": "A1 Timing evasion, 100x slower",
       "realisation": "nmap -T1: roughly one probe per several seconds",
-      "recall_under_attack": 0.02550720376359894,
-      "evasion_rate": 0.9744927962364011,
+      "recall_under_attack": 0.06850926198177007,
+      "evasion_rate": 0.9314907380182299,
       "scan_flows": 13604
     },
     {
       "attack": "A1 Timing evasion, 1000x slower",
       "realisation": "nmap -T0: a scan paced over hours",
-      "recall_under_attack": 7.350779182593354e-05,
-      "evasion_rate": 0.9999264922081741,
+      "recall_under_attack": 0.003969420758600412,
+      "evasion_rate": 0.9960305792413996,
       "scan_flows": 13604
     },
     {
       "attack": "A2 Payload padding, 24 bytes",
       "realisation": "nmap --data-length 24: probes stop looking empty",
-      "recall_under_attack": 0.0,
-      "evasion_rate": 1.0,
+      "recall_under_attack": 0.0004410467509556013,
+      "evasion_rate": 0.9995589532490444,
       "scan_flows": 13604
     },
     {
@@ -48,15 +48,15 @@
     {
       "attack": "A3 TCP window reshaping",
       "realisation": "Scanner sets an everyday initial window instead of 1024",
-      "recall_under_attack": 0.748897383122611,
-      "evasion_rate": 0.251102616877389,
+      "recall_under_attack": 0.9963246104087033,
+      "evasion_rate": 0.0036753895912966517,
       "scan_flows": 13604
     },
     {
       "attack": "A4 Handshake mimicry (connect scan)",
       "realisation": "nmap -sT: the connection is completed so a reply exists",
-      "recall_under_attack": 0.0,
-      "evasion_rate": 1.0,
+      "recall_under_attack": 0.00933548956189356,
+      "evasion_rate": 0.9906645104381064,
       "scan_flows": 13604
     },
     {
@@ -70,61 +70,61 @@
   "defense": [
     {
       "attack": "A0 No attack (clean scan flows)",
-      "recall_baseline_model": 0.9986033519553073,
-      "recall_after_adversarial_training": 0.9979417818288738,
-      "recall_recovered": -0.0006615701264334195
+      "recall_baseline_model": 0.9989708909144369,
+      "recall_after_adversarial_training": 0.9997059688326962,
+      "recall_recovered": 0.0007350779182593303
     },
     {
       "attack": "A1 Timing evasion, 10x slower",
-      "recall_baseline_model": 0.771023228462217,
-      "recall_after_adversarial_training": 0.9946339311967068,
-      "recall_recovered": 0.2236107027344898
+      "recall_baseline_model": 0.980005880623346,
+      "recall_after_adversarial_training": 0.9994119376653925,
+      "recall_recovered": 0.019406057042046454
     },
     {
       "attack": "A1 Timing evasion, 100x slower",
-      "recall_baseline_model": 0.02550720376359894,
-      "recall_after_adversarial_training": 0.7250073507791825,
-      "recall_recovered": 0.6995001470155836
+      "recall_baseline_model": 0.06850926198177007,
+      "recall_after_adversarial_training": 0.9766245221993531,
+      "recall_recovered": 0.908115260217583
     },
     {
       "attack": "A1 Timing evasion, 1000x slower",
-      "recall_baseline_model": 7.350779182593354e-05,
-      "recall_after_adversarial_training": 0.023890032343428402,
-      "recall_recovered": 0.023816524551602467
+      "recall_baseline_model": 0.003969420758600412,
+      "recall_after_adversarial_training": 0.052558071155542486,
+      "recall_recovered": 0.048588650396942074
     },
     {
       "attack": "A2 Payload padding, 24 bytes",
-      "recall_baseline_model": 0.0,
-      "recall_after_adversarial_training": 0.9869891208468098,
-      "recall_recovered": 0.9869891208468098
+      "recall_baseline_model": 0.0004410467509556013,
+      "recall_after_adversarial_training": 0.9999264922081741,
+      "recall_recovered": 0.9994854454572185
     },
     {
       "attack": "A2 Payload padding, 64 bytes",
       "recall_baseline_model": 0.0,
-      "recall_after_adversarial_training": 0.0,
-      "recall_recovered": 0.0
+      "recall_after_adversarial_training": 0.9945604234048809,
+      "recall_recovered": 0.9945604234048809
     },
     {
       "attack": "A3 TCP window reshaping",
-      "recall_baseline_model": 0.748897383122611,
-      "recall_after_adversarial_training": 0.9908850338135843,
-      "recall_recovered": 0.24198765069097328
+      "recall_baseline_model": 0.9963246104087033,
+      "recall_after_adversarial_training": 0.9992649220817407,
+      "recall_recovered": 0.0029403116730373213
     },
     {
       "attack": "A4 Handshake mimicry (connect scan)",
-      "recall_baseline_model": 0.0,
-      "recall_after_adversarial_training": 0.9980152896206997,
-      "recall_recovered": 0.9980152896206997
+      "recall_baseline_model": 0.00933548956189356,
+      "recall_after_adversarial_training": 0.9999264922081741,
+      "recall_recovered": 0.9905910026462805
     },
     {
       "attack": "A5 Combined (A1 100x + A2 + A3 + A4)",
       "recall_baseline_model": 0.0,
-      "recall_after_adversarial_training": 0.9981623052043517,
-      "recall_recovered": 0.9981623052043517
+      "recall_after_adversarial_training": 0.9997059688326962,
+      "recall_recovered": 0.9997059688326962
     }
   ],
   "clean_fpr_baseline": 0.0,
   "clean_fpr_hardened": 0.0,
-  "clean_recall_hardened": 0.9979417818288738,
+  "clean_recall_hardened": 0.9997059688326962,
   "augmented_training_rows": 254271
 }

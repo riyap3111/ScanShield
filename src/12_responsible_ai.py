@@ -192,8 +192,10 @@ def main():
     print("\ncomputing explanations...")
     sample = test.sample(min(3000, len(test)), random_state=42)
     Xs = sample[cols]
+    # n_jobs=1: a worker subprocess would have to import xgboost itself, which fails because
+    # libomp is only loaded into this process (see src/xgb_support.py).
     perm = permutation_importance(model, Xs, sample[TARGET].values, n_repeats=5,
-                                  random_state=42, scoring="average_precision", n_jobs=2)
+                                  random_state=42, scoring="average_precision", n_jobs=1)
     imp = pd.DataFrame({"feature": cols, "permutation_importance": perm.importances_mean,
                         "permutation_std": perm.importances_std})
 
