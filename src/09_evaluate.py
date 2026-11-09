@@ -24,9 +24,16 @@ from utils import save_table, save_json, save_fig, style, select_model
 style()
 MODEL_MATRIX = PROC_DIR / "model_matrix.parquet"
 MODEL_DIR = PROC_DIR / "models"
-MODELS = ["Logistic regression", "Random Forest", "Gradient Boosting"]
+# Read from the comparison table so a family added in step 08 appears here automatically.
 MODEL_COLORS = {"Logistic regression": "#2a78b5", "Random Forest": "#4c9f70",
-                "Gradient Boosting": "#e07b1a"}
+                "Gradient Boosting": "#e07b1a", "XGBoost": "#8e5ea2"}
+
+
+def model_names():
+    comp = pd.read_csv(TAB_DIR / "model_comparison.csv")
+    order = ["Logistic regression", "Random Forest", "Gradient Boosting", "XGBoost"]
+    present = list(dict.fromkeys(comp.model))
+    return [m for m in order if m in present] + [m for m in present if m not in order]
 
 # Features shown when profiling an individual error case.
 CASE_COLS = ["Flow Duration", "Total Fwd Packets", "Total Backward Packets",
@@ -40,7 +47,8 @@ def load_all():
     splits = pd.read_parquet(SPLIT_FILE)
     fs = json.load(open(MET_DIR / "feature_sets_v2.json"))
     thr = pd.read_csv(TAB_DIR / "threshold_choice.csv").set_index("model")["threshold"].to_dict()
-    models = {m: joblib.load(MODEL_DIR / f"{m.lower().replace(' ', '_')}.joblib") for m in MODELS}
+    models = {m: joblib.load(MODEL_DIR / f"{m.lower().replace(' ', '_')}.joblib")
+              for m in model_names()}
     return df, splits, fs, thr, models
 
 
@@ -48,6 +56,7 @@ def load_all():
 
 
 def main():
+    MODELS = model_names()
     df, splits, fs, thr, models = load_all()
     cols = fs["full"]
     m_val = (splits.strat_split == "val").values
@@ -109,7 +118,7 @@ def main():
     save_fig(fig, "fig10_model_comparison")
 
     # ---------------- Figure 11: confusion matrices for all three -------------------------
-    fig, axes = plt.subplots(1, 3, figsize=(14, 4.3))
+    fig, axes = plt.subplots(1, len(MODELS), figsize=(3.9 * len(MODELS), 4.0))
     for ax, n in zip(axes, MODELS):
         c = confusion_matrix(yt, (st[n] >= thr[n]).astype(int))
         ax.imshow(c, cmap="Blues")
@@ -120,7 +129,7 @@ def main():
         ax.set_xticks([0, 1], ["Pred. BENIGN", "Pred. Scan"], fontsize=9)
         ax.set_yticks([0, 1], ["BENIGN", "Scan"], fontsize=9)
         ax.grid(False)
-        ax.set_title(f"{n}\nFP={c[0,1]}  FN={c[1,0]}", fontsize=11)
+        ax.set_title(f"{n}\nFP={c[0,1]}  FN={c[1,0]}", fontsize=10)
     fig.suptitle("Confusion matrices at each model's frozen operating threshold (test split)",
                  fontweight="bold", fontsize=13)
     save_fig(fig, "fig11_confusion_matrices")

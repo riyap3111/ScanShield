@@ -9,6 +9,15 @@ import matplotlib.pyplot as plt
 
 from config import TAB_DIR, MET_DIR, FIG_DIR
 
+# Unpickling a saved XGBoost model imports xgboost, which on macOS needs libomp loaded first.
+# Every pipeline script imports utils, so doing it here covers them all. It is a no-op when
+# libomp is absent or XGBoost was never used.
+try:
+    from xgb_support import preload_libomp
+    preload_libomp()
+except Exception:                                  # pragma: no cover - environment-dependent
+    pass
+
 
 def load_raw(path):
     df = pd.read_csv(path, low_memory=False)

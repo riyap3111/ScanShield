@@ -16,10 +16,32 @@ from docx.shared import Pt
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from docx_helpers import (  # noqa: E402
-    appendix_figure, appendix_heading, bullets_after, caption, delete_paragraph, delete_table,
-    fill_table, find_paragraph, page_break, paragraph_after, put_figure, set_paragraph,
-    write_paragraphs,
+    appendix_heading, bullets_after, caption, delete_table, figure_after, fill_table,
+    find_paragraph, page_break, paragraph_after, put_figure, set_paragraph, write_paragraphs,
 )
+
+# Every figure sits in the section it belongs to rather than in an appendix.
+FIGURES = {
+    "model_comparison": (1, "fig10_model_comparison.png"),
+    "confusion": (2, "fig11_confusion_matrices.png"),
+    "errors": (3, "fig12_error_profile.png"),
+    "generalization": (4, "fig13_generalization.png"),
+    "adversarial": (5, "fig14_adversarial.png"),
+    "subgroups": (6, "fig15_subgroups.png"),
+    "explainability": (7, "fig16_explainability.png"),
+    "monitoring": (8, "fig17_monitoring.png"),
+}
+
+
+def place(anchor, key, cap_text, width=6.2):
+    """Drop a numbered figure under `anchor` (a table or paragraph)."""
+    num, name = FIGURES[key]
+    path = FIG / name
+    if not path.exists():
+        return None
+    el = anchor._tbl if hasattr(anchor, "_tbl") else anchor._p
+    parent = anchor._parent
+    return figure_after(el, parent, path, f"Figure {num}. {cap_text}", width_inches=width)
 
 TAB = ROOT / "outputs" / "tables"
 MET = ROOT / "outputs" / "metrics"
@@ -64,6 +86,9 @@ def build_context():
     c["b"] = c["test"].loc[c["best"]]
     c["bv"] = c["val"].loc[c["best"]]
 
+    order = ["Logistic regression", "Random Forest", "Gradient Boosting", "XGBoost"]
+    present = list(dict.fromkeys(comp.model))
+    c["models"] = [m for m in order if m in present] + [m for m in present if m not in order]
     c["tune"] = t("model_tuning").set_index("model")
     c["cv"] = t("cv_variance").set_index("model")
     c["thr"] = t("threshold_choice").set_index("model")
@@ -133,7 +158,8 @@ def snapshot(doc, c, T):
     fill_table(T[2], [
         ["Item", "Current status"],
         ["Overall status",
-         "On track. Three families tuned and compared, test split scored once, and the "
+         f"On track. {len(c['models'])} model families tuned and compared, test split scored "
+         "once, and the "
          "generalization, adversarial, Responsible AI and monitoring work complete. Both "
          "proposal criteria met with margin."],
         ["Best-performing approach so far",
@@ -163,11 +189,11 @@ def s1_status(doc, c):
         f"Feature engineering, not pruning. Every original CICFlowMeter column is kept and "
         f"{len(c['eng'])} engineered features added on top ({c['fs']['n_full']} inputs): payload "
         f"per packet, reply ratio, flag density, header-to-payload ratio. Section 3 ablates them.",
-        f"Two new families. Random Forest and gradient-boosted trees joined the baseline. "
-        f"Boosting uses scikit-learn's histogram implementation rather than XGBoost (Chen & "
-        f"Guestrin, 2016), whose macOS wheel, like LightGBM's (Ke et al., 2017), needs an "
-        f"OpenMP runtime unavailable in our environment; same algorithm family, "
-        f"and the only departure from the proposed plan.",
+        f"Three new families. Random Forest, scikit-learn's histogram gradient boosting and "
+        f"XGBoost (Chen & Guestrin, 2016) joined the baseline, so the proposal's planned "
+        f"candidates are both covered. XGBoost needs an OpenMP runtime Apple does not ship; "
+        f"src/install_libomp.py fetches it from conda-forge and verifies its checksum, so the "
+        f"pipeline reproduces without Homebrew.",
         f"A genuinely held-out test. Threshold and model choice were both fixed on validation; "
         f"the test split was read once afterwards.",
         f"Generalization went well past the Monday control: all seven other CICIDS2017 day "
@@ -186,9 +212,10 @@ def s2_models(doc, c, T):
     tune, cv, cost = c["tune"], c["cv"], c["cost"]
     p = find_paragraph(doc, "[Describe the models")
     write_paragraphs(p, [
-        f"Three families were compared on identical data — same training split, same "
+        f"{len(c['models'])} families were compared on identical data — same training split, same "
         f"{c['fs']['n_full']} features, same protocol — differing in kind, not just in "
-        f"hyperparameters: linear, bagged trees, boosted trees. Each got a 15-candidate "
+        f"hyperparameters: linear, bagged trees, and two independent boosting implementations. "
+        f"Each got a 15-candidate "
         f"randomised search scored by 5-fold stratified CV on the training split only "f"(scikit-learn; Pedregosa et al., 2011). The "
         f"search metric is average precision, not accuracy, which is uninformative when 42.5% "
         f"of rows are positive and the two error types cost differently. Imbalance is handled "
@@ -197,18 +224,20 @@ def s2_models(doc, c, T):
         f"Validation design. The alert threshold is the highest-F1 threshold on validation "
         f"inside the 5% ceiling, then frozen; the winning family is chosen the same way, on "
         f"validation, so neither is informed by test data. Only then was test scored, once. "
-        f"Reproducibility rests on seed 42, tuned parameters in Appendix B, and a one-command "
+        f"Reproducibility rests on seed 42, tuned parameters in Appendix A, and a one-command "
         f"pipeline; three seeds change recall by {c['seed_recall_std']:.1e}.",
     ])
     rows = [["Approach", "Key settings", "Validation method", "Rationale / result"]]
     labels = {"Logistic regression": "Baseline: Logistic regression",
-              "Random Forest": "Random Forest", "Gradient Boosting": "Gradient Boosting (hist.)"}
-    for m in ["Logistic regression", "Random Forest", "Gradient Boosting"]:
+              "Random Forest": "Random Forest",
+              "Gradient Boosting": "Gradient Boosting (scikit-learn hist.)",
+              "XGBoost": "XGBoost"}
+    for m in c["models"]:
         params = json.loads(tune.loc[m, "best_params"])
         pretty = ", ".join(f"{k.split('__')[-1]}={_fmt(v)}" for k, v in params.items())
         tv = c["test"].loc[m]
         rows.append([
-            labels[m],
+            labels.get(m, m),
             f"{pretty}; balanced class weights" if "class_weight" not in params else pretty,
             f"15-candidate randomised search, 5-fold stratified CV on train. PR-AUC "
             f"{cv.loc[m, 'pr_auc_mean']:.5f} ± {cv.loc[m, 'pr_auc_std']:.5f}",
@@ -228,9 +257,11 @@ def _why(m, best):
     base = {
         "Logistic regression": "Linear reference carried over from Interim Report 1.",
         "Random Forest": "Bagged trees capture threshold interactions a linear model cannot.",
-        "Gradient Boosting": "Boosted trees correct their own errors in sequence; the planned "
-                             "XGBoost stand-in.",
-    }[m]
+        "Gradient Boosting": "Boosted trees correcting their own errors in sequence, in "
+                             "scikit-learn's histogram implementation.",
+        "XGBoost": "The gradient-boosting library named in the proposal, run with the "
+                   "histogram tree method.",
+    }.get(m, "")
     return ("Selected model. " + base) if m == best else base
 
 
@@ -248,15 +279,18 @@ def s3_evaluation(doc, c, T):
     ])
     rows = [["Model", "Precision", "Recall", "F1", "PR-AUC / ROC-AUC", "Operational note"]]
     best_size = c["cost"].loc[c["best"], "model_size_mb"]
-    for m in ["Logistic regression", "Random Forest", "Gradient Boosting"]:
+    for m in c["models"]:
         tv, cost_m = c["test"].loc[m], c["cost"].loc[m]
         if m == c["best"]:
             n = (f"Selected on validation. {cost_m.flows_scored_per_second:,.0f} flows/s, "
                  f"{cost_m.model_size_mb:.1f} MB.")
-        elif m == "Logistic regression":
-            n = "Baseline: fastest and fully interpretable."
         else:
-            n = "Ties the selected model on ranking."
+            gap = tv.pr_auc - c["test"].loc[c["best"]].pr_auc
+            rank = ("matches the selected model on ranking" if abs(gap) < 5e-6
+                    else f"PR-AUC {gap:+.6f} against the selected model")
+            lead = ("Baseline: fastest and fully interpretable"
+                    if m == "Logistic regression" else "Not selected")
+            n = f"{lead}; {rank}."
         rows.append([
             m + (" (baseline)" if m == "Logistic regression" else ""),
             f5(tv.precision), f5(tv.recall), f5(tv.f1),
@@ -280,14 +314,19 @@ def s3_evaluation(doc, c, T):
         f"{int(b.TN + b.FP):,} benign test flows. This is stable, not a lucky split: 5-fold "
         f"PR-AUC {c['cv'].loc[c['best'], 'pr_auc_mean']:.5f} ± "
         f"{c['cv'].loc[c['best'], 'pr_auc_std']:.5f}, and three seeds agree on recall to "
-        f"{c['seed_recall_std']:.1e}. The three families are separated by "
-        f"{abs(int(c['test'].loc['Logistic regression'].FN) - int(b.FN))} flows out of "
+        f"{c['seed_recall_std']:.1e}. The {len(c['models'])} families are separated by "
+        f"{int(c['test'].FN.max() - c['test'].FN.min())} flows out of "
         f"{int(b.TN + b.FP + b.FN + b.TP):,}: the honest reading is that they are tied, and the "
         f"choice rests on the zero false alarms rather than a capability gap. "
         f"{_ablation_sentence(c)} Cost is no constraint at "
         f"{cost.loc[c['best'], 'model_size_mb']:.1f} MB and "
         f"{cost.loc[c['best'], 'flows_scored_per_second']:,.0f} flows/s on a laptop.",
     ])
+    place(p, "confusion",
+          f"Confusion matrices for all {len(c['comp'].model.unique())} families at their own "
+          f"frozen thresholds on the locked test split. Takeaway: the families are separated by "
+          f"a handful of flows, so the selection rests on error counts rather than on a gap in "
+          f"capability.", width=6.0)
 
 
 def _ablation_sentence(c):
@@ -309,7 +348,7 @@ def _ablation_sentence(c):
                f"{abs(int(full.FN) - int(orig.FN))} flows). This data is close "
                f"to linearly separable, so above 0.998 recall at zero false alarms there is no "
                f"headroom for any feature set to show an advantage. They are kept because they "
-               f"cost nothing and separate the classes cleanly on their own (Table B3), not "
+               f"cost nothing and separate the classes cleanly on their own (Table A3), not "
                f"because this dataset proves they help.")
     else:
         eng = (f"The ablation is candid about its limits: the engineered features and the "
@@ -317,7 +356,7 @@ def _ablation_sentence(c):
                f"each, recall {f5(full.recall, 4)} vs {f5(orig.recall, 4)}). This data is close "
                f"to linearly separable, so above 0.998 recall at zero false alarms no feature "
                f"set has room to show an advantage. The engineered features are kept because "
-               f"they cost nothing and separate the classes cleanly on their own (Table B3), "
+               f"they cost nothing and separate the classes cleanly on their own (Table A3), "
                f"not because this dataset proves they help.")
     fp = (f"Removing the port and TCP-window columns, which encode this particular scanner's "
           f"fingerprint, still leaves recall at {f5(nofp.recall, 4)} with FPR "
@@ -335,8 +374,7 @@ def s4_errors(doc, c, T):
         f"in {int(b.TN + b.FP + b.FN + b.TP):,} test flows, so on this split the only error "
         f"type to analyse is the missed scan; the false-positive row below therefore draws on "
         f"the unseen days from Section 5, where false alarms do occur. Both error types live in "
-        f"the same narrow band where a probe looks like a failed connection (Appendix A, "
-        f"Figure A2).",
+        f"the same narrow band where a probe looks like a failed connection (Figure 3).",
     ])
     rows = [["Example / error type", "Likely cause", "Security or operational impact",
              "Planned improvement"]]
@@ -371,7 +409,11 @@ def s4_errors(doc, c, T):
         f"lifts recall on these to "
         f"{f5(c['advd'].loc['A4 Handshake mimicry (connect scan)'].recall_after_adversarial_training, 4)}.",
     ])
-    fill_table(T[6], rows, widths=[1.35, 1.6, 1.7, 2.0])
+    tb = fill_table(T[6], rows, widths=[1.35, 1.6, 1.7, 2.0])
+    place(tb, "errors",
+          "What the selected model gets wrong on the locked test split, by outcome. Takeaway: "
+          "the missed scans sit between the two class distributions on every axis, which is "
+          "why per-flow features alone cannot separate them further.", width=6.3)
 
 
 def s5_generalization(doc, c, T):
@@ -393,7 +435,7 @@ def s5_generalization(doc, c, T):
         f"came first: all seven files carry the same 79 columns, but every header has leading "
         f"whitespace and the web-attacks file is cp1252-encoded, so a plain UTF-8 read of its "
         f"'Web Attack - Brute Force' labels fails outright. The pipeline audits these "
-        f"differences (Appendix C, Table C3) rather than coercing them silently, then applies "
+        f"differences (Appendix B, Table B3) rather than coercing them silently, then applies "
         f"the identical cleaning and feature code path.",
     ])
     rows = [["Dataset", "Differences from training data", "Result", "Interpretation"]]
@@ -424,7 +466,12 @@ def s5_generalization(doc, c, T):
         f"Both rows inherit CICIDS2017's own labelling errors (Engelen et al., 2021), so the "
         f"last fraction of a percent should not be read too closely.",
     ])
-    fill_table(T[7], rows, widths=[1.3, 1.65, 1.75, 2.0])
+    tb = fill_table(T[7], rows, widths=[1.3, 1.65, 1.75, 2.0])
+    place(tb, "generalization",
+          "Left: false-positive rate on benign traffic for each unseen capture day against the "
+          "5% ceiling. Right: how often each unseen attack type is labelled a port scan. "
+          "Takeaway: the false-alarm rate holds on days the model never saw, and other attack "
+          "families almost never trigger it.", width=6.3)
 
 
 def s6_adversarial(doc, c, T):
@@ -466,7 +513,7 @@ def s6_adversarial(doc, c, T):
         f"still leaves recall at {f5(slow_d.recall_after_adversarial_training, 4)}, which is why "
         f"per-source slow-scan features are the critical path in Section 9. These are "
         f"feature-space approximations, so they bound the risk rather than measure it exactly. "
-        f"Full results in Appendix D, Table D1.",
+        f"Full results in Appendix C, Table C1.",
     ])
     fill_table(T[8], [
         ["Asset", "Attacker objective", "Capability", "Attack / test", "Defense / mitigation"],
@@ -483,6 +530,11 @@ def s6_adversarial(doc, c, T):
          f"unchanged clean FPR. Structural backstop for pacing: per-source slow-scan features "
          f"(src/slow_scan.py) over 5 min, 1 h and 24 h windows."],
     ], widths=[1.05, 1.05, 1.5, 1.45, 1.65])
+    place(T[8], "adversarial",
+          "Recall on held-out scan flows under each evasion attack, before and after "
+          "adversarial training. Takeaway: simple traffic shaping defeats the deployed model "
+          "outright, and training on shaped flows recovers everything except extreme pacing.",
+          width=5.9)
 
 
 def _disparity_sentence(c, svc_ok, spread):
@@ -499,14 +551,14 @@ def _disparity_sentence(c, svc_ok, spread):
                 f"{spread['spread'] * 100:.3f} percentage points, the highest being "
                 f"{pct(worst.fpr, 3)} on {worst.service_group.lower()}.")
     if not len(rec):
-        return head + " Recall is flat across flow sizes and the capture (Figure A5)."
+        return head + " Recall is flat across flow sizes and the capture (Figure 6)."
     low = rec.loc[rec.recall.idxmin()]
     tail = (f" Recall is where the real disparity sits: it spans {f5(rec_lo, 4)} to "
             f"{f5(rec_hi, 4)}, and the weakest group is {low.service_group} at "
             f"{f5(low.recall, 4)} ({int(low.FN)} of {int(low.scan_flows)} scans missed). That "
             f"matters more than the number suggests, because those are among the ports an "
             f"attacker most wants open, so the model is weakest exactly where a hit is most "
-            f"valuable. Recall is otherwise flat across flow sizes and the capture (Figure A5). "
+            f"valuable. Recall is otherwise flat across flow sizes and the capture (Figure 6). "
             f"Caveats: that group holds only {int(low.scan_flows)} scan flows, and zero false "
             f"alarms on one lab capture is weak evidence of fairness.")
     return head + tail
@@ -525,12 +577,21 @@ def s7_responsible(doc, c, T):
         f"size, period within the capture, and capture day. The stake is concrete — if false "
         f"alarms concentrated on one service, the team running it would absorb the disruption "
         f"and be first to distrust the tool. {_disparity_sentence(c, svc_ok, spread)} "
-        f"Privacy, retention, oversight and misuse controls continue in Appendix D, Table D4.",
+        f"Privacy, retention, oversight and misuse controls continue in Appendix C, Table C4.",
     ])
     rows = [["Concern", "Test or safeguard", "Evidence / current finding", "Remaining action"]]
     for _, r in gov.head(3).iterrows():
         rows.append([r.concern, r.test_or_safeguard, r.evidence, r.remaining_action])
-    fill_table(T[9], rows, widths=[1.1, 1.8, 1.9, 1.85])
+    tb = fill_table(T[9], rows, widths=[1.1, 1.8, 1.9, 1.85])
+    fig7 = place(tb, "subgroups",
+                 "Performance by service group, flow size and position in the capture. "
+                 "Takeaway: no group absorbs a disproportionate share of the false alarms, but "
+                 "recall is visibly weaker on file-sharing ports.", width=6.3)
+    place(fig7, "explainability",
+          "Permutation importance across the whole model, and a worked explanation of one "
+          "individual alert. Takeaway: the model leans on reply behaviour and flow economy "
+          "rather than on any single tool-specific value, and every alert can be explained to "
+          "the analyst who receives it.", width=6.3)
 
 
 def s8_monitoring(doc, c, T):
@@ -551,12 +612,16 @@ def s8_monitoring(doc, c, T):
         f"(PSI {worst_psi.max_psi_across_days:.2f}) — expected from a different service mix, "
         f"not a broken sensor. Response is review-first at every tier: nothing is blocked "
         f"automatically, because a false alarm must never cut off a real user. The seven-step "
-        f"response path and logging schema are in Appendix D, Tables D2-D3.",
+        f"response path and logging schema are in Appendix C, Tables C2-C3.",
     ])
     rows = [["Signal / metric", "Threshold or trigger", "Owner / response", "Feedback use"]]
     for _, r in plan.head(4).iterrows():
         rows.append([r.signal, r.threshold_or_trigger, r.owner_and_response, r.feedback_use])
-    fill_table(T[10], rows, widths=[1.3, 1.85, 1.9, 1.6])
+    tb = fill_table(T[10], rows, widths=[1.3, 1.85, 1.9, 1.6])
+    place(tb, "monitoring",
+          "Production baselines measured on the unseen days: feature drift, alert volume per "
+          "day, and the confidence distribution of raised alerts. Takeaway: the thresholds in "
+          "the table above are anchored to observed behaviour, not guessed.", width=6.3)
 
 
 def s9_plan(doc, c, T):
@@ -636,7 +701,8 @@ def contributions(doc, c, T):
          "src/13_monitoring.py; tables schema_compatibility, generalization_by_day, "
          "subgroup_*, privacy_governance, drift_psi, alert_volume; figures 13, 15, 16, 17"],
         ["Ojas Prashant Suratkar",
-         "Model development and tuning for all three families (randomised search, 5-fold CV, "
+         "Model development and tuning for all four families including the XGBoost build "
+         "(randomised search, 5-fold CV, "
          "class-weight strategy, threshold selection and freezing); evaluation figures and the "
          "structured error analysis; the adversarial threat model, the five evasion attacks and "
          "the adversarial-training defense; the Deliverable 3 results generator; co-wrote the "
@@ -647,8 +713,8 @@ def contributions(doc, c, T):
         ["Both",
          "Joint decisions: keeping every column and adding engineered features on top, the "
          "choice of PR-AUC as the search metric and recall-at-bounded-FPR as the primary "
-         "metric, the threshold rule, and the substitution of histogram gradient boosting for "
-         "XGBoost. Each member reviewed and re-ran the other's scripts before merging.",
+         "metric, the threshold rule, and running both boosting implementations rather than "
+         "only one. Each member reviewed and re-ran the other's scripts before merging.",
          "run_all.sh reproduces every output; RESULTS_DELIVERABLE3.md is generated from the "
          "saved tables"],
     ], widths=[1.1, 3.4, 2.15])
@@ -674,8 +740,10 @@ def ai_disclosure(doc, c, T):
          "recall-at-bounded-FPR as the primary metric, the threshold rule, the threat model and "
          "the choice of evasion attacks. We reviewed all generated code, re-ran the entire "
          "pipeline from the raw CSVs, and checked every number in this report against the "
-         "tables in outputs/. One substantive correction we made: nested parallel jobs in the "
-         "tuning search deadlocked on macOS and we reconfigured the job pool."],
+         "tables in outputs/. Two substantive corrections we made: nested parallel jobs in the "
+         "tuning search deadlocked on macOS and we reconfigured the job pool, and model "
+         "selection was initially reading the locked test split, which we moved to validation "
+         "so the test result stays honest."],
         ["", "", ""],
     ], widths=[1.1, 2.75, 2.8])
     # the template ships a spare row for a second tool; drop it
@@ -702,69 +770,30 @@ def rubric(doc, c, T):
         ["Updated status and project management", "1",
          "Executive Status Snapshot and Section 1; Section 9 plan"],
         ["Model development and comparison", "2",
-         "Section 2 and its table; tuned settings and feature sets in Appendix B "
-         "(Tables B1-B3)"],
+         "Section 2 and its table; tuned settings and feature sets in Appendix A "
+         "(Tables A1-A3)"],
         ["Evaluation and error analysis", "2",
-         "Section 3, metric table and Figure 1; Section 4 and its table; "
-         "Appendix A Figures A1-A2"],
+         "Section 3, metric table, Figures 1-2; Section 4, its table and Figure 3"],
         ["Generalization testing", "2",
-         "Section 5 and its table; Appendix A Figure A3; Appendix C Tables C1-C3"],
+         "Section 5, its table and Figure 4; Appendix B Tables B1-B3"],
         ["Adversarial ML", "1",
-         "Section 6, threat-model table; Appendix A Figure A4; Appendix D Table D1"],
+         "Section 6, threat-model table and Figure 5; Appendix C Table C1"],
         ["Responsible AI, privacy, and governance", "1",
-         "Section 7 and its table; Appendix A Figures A5-A6; Appendix D Table D4"],
+         "Section 7, its table and Figures 6-7; Appendix C Table C4"],
         ["Monitoring, response, and final plan", "1",
-         "Section 8 and its table; Section 9; Appendix A Figure A7; "
-         "Appendix D Tables D2, D3 and D5"],
+         "Section 8, its table and Figure 8; Section 9; Appendix C Tables C2, C3 and C5"],
     ], widths=[2.6, 0.6, 3.45])
 
 
 def appendices(doc, c):
     page_break(doc)
-    appendix_heading(doc, "Appendix A. Supporting Figures")
-    figs = [
-        ("fig11_confusion_matrices.png",
-         "Figure A1. Confusion matrices for all three families at their own frozen thresholds on "
-         "the locked test split. Takeaway: the families differ by a handful of flows, so the "
-         "selection rests on error counts rather than on a gap in capability."),
-        ("fig12_error_profile.png",
-         "Figure A2. Where the errors sit. Takeaway: false alarms and missed scans both fall "
-         "between the two class distributions, which is why per-flow features alone cannot "
-         "separate them further."),
-        ("fig13_generalization.png",
-         "Figure A3. Left: false-positive rate on benign traffic for each unseen capture day, "
-         "against the 5% ceiling. Right: how often each unseen attack type is labelled a port "
-         "scan. Takeaway: the false-alarm rate holds on days the model never saw, and other "
-         "attack families almost never trigger it."),
-        ("fig14_adversarial.png",
-         "Figure A4. Recall under each evasion attack, before and after adversarial training. "
-         "Takeaway: timing evasion is the one attack that really works, and training on shaped "
-         "flows recovers most of what it takes away."),
-        ("fig15_subgroups.png",
-         "Figure A5. Performance by service group, flow size and position in the capture. "
-         "Takeaway: no group absorbs a disproportionate share of the errors."),
-        ("fig16_explainability.png",
-         "Figure A6. Permutation importance and a worked explanation of a single alert. "
-         "Takeaway: the model leans on reply behaviour and flow economy, not on one "
-         "tool-specific value."),
-        ("fig17_monitoring.png",
-         "Figure A7. Measured production baselines: feature drift, alert volume per day, and "
-         "the confidence distribution of raised alerts. Takeaway: the monitoring thresholds in "
-         "Section 8 are anchored to observed behaviour."),
-    ]
-    for name, cap in figs:
-        path = FIG / name
-        if path.exists():
-            appendix_figure(doc, path, cap, width_inches=6.3)
-
-    page_break(doc)
-    appendix_heading(doc, "Appendix B. Tuned Hyperparameters and Feature Sets")
+    appendix_heading(doc, "Appendix A. Tuned Hyperparameters and Feature Sets")
     p = doc.add_paragraph()
-    set_paragraph(p, "Table B1. Selected configuration per family, from the 15-candidate "
+    set_paragraph(p, "Table A1. Selected configuration per family, from the 15-candidate "
                      "randomised search with 5-fold stratified cross-validation on the training "
                      "split.", size=Pt(9), italic=True)
     rows = [["Model", "Tuned hyperparameters", "CV PR-AUC (mean ± sd)", "Search time"]]
-    for m in ["Logistic regression", "Random Forest", "Gradient Boosting"]:
+    for m in c["models"]:
         params = json.loads(c["tune"].loc[m, "best_params"])
         rows.append([
             m, ", ".join(f"{k.split('__')[-1]} = {_fmt(v)}" for k, v in params.items()),
@@ -775,7 +804,7 @@ def appendices(doc, c):
                widths=[1.3, 2.9, 1.4, 0.8])
 
     p = doc.add_paragraph()
-    set_paragraph(p, f"Table B2. Feature sets. The primary set keeps every original column; the "
+    set_paragraph(p, f"Table A2. Feature sets. The primary set keeps every original column; the "
                      f"other two exist only as diagnostics.", size=Pt(9), italic=True)
     abl = c["abl"]
     rows = [["Feature set", "n", "What it contains", "Validation recall / FPR"]]
@@ -794,7 +823,7 @@ def appendices(doc, c):
                widths=[1.2, 0.4, 3.55, 1.25])
 
     p = doc.add_paragraph()
-    set_paragraph(p, "Table B3. Engineered features and why each was added. Medians are over the "
+    set_paragraph(p, "Table A3. Engineered features and why each was added. Medians are over the "
                      "cleaned PortScan file.", size=Pt(9), italic=True)
     eng = c["eng"]
     rows = [["Feature", "Definition", "Why it should help", "Median scan", "Median benign"]]
@@ -805,9 +834,9 @@ def appendices(doc, c):
                widths=[1.3, 1.75, 1.95, 0.72, 0.72])
 
     page_break(doc)
-    appendix_heading(doc, "Appendix C. Generalization Detail")
+    appendix_heading(doc, "Appendix B. Generalization Detail")
     p = doc.add_paragraph()
-    set_paragraph(p, "Table C1. Every unseen capture day, scored at the frozen threshold.",
+    set_paragraph(p, "Table B1. Every unseen capture day, scored at the frozen threshold.",
                   size=Pt(9), italic=True)
     rows = [["Day", "Contents", "Flows", "Benign flows", "Benign alerts", "Benign FPR",
              "Within 5%"]]
@@ -819,7 +848,7 @@ def appendices(doc, c):
                widths=[0.85, 1.85, 0.7, 0.75, 0.75, 0.65, 0.55])
 
     p = doc.add_paragraph()
-    set_paragraph(p, "Table C2. Attack types absent from training, and how often the port-scan "
+    set_paragraph(p, "Table B2. Attack types absent from training, and how often the port-scan "
                      "detector flags them.", size=Pt(9), italic=True)
     att = (c["gen_att"].groupby("attack_type")
            .agg(flows=("flows", "sum"), flagged=("flagged_as_portscan", "sum"))
@@ -832,7 +861,7 @@ def appendices(doc, c):
                widths=[2.6, 1.0, 1.4, 1.0])
 
     p = doc.add_paragraph()
-    set_paragraph(p, "Table C3. Schema differences that had to be handled before scoring.",
+    set_paragraph(p, "Table B3. Schema differences that had to be handled before scoring.",
                   size=Pt(9), italic=True)
     rows = [["Day", "Columns", "Encoding required", "Identical to training file"]]
     for _, r in c["schema"].iterrows():
@@ -842,9 +871,9 @@ def appendices(doc, c):
                widths=[1.5, 0.9, 1.6, 2.0])
 
     page_break(doc)
-    appendix_heading(doc, "Appendix D. Adversarial Detail and Response Workflow")
+    appendix_heading(doc, "Appendix C. Adversarial Detail and Response Workflow")
     p = doc.add_paragraph()
-    set_paragraph(p, "Table D1. Every evasion attack, how a real scanner would produce it, and "
+    set_paragraph(p, "Table C1. Every evasion attack, how a real scanner would produce it, and "
                      "the effect of adversarial training.", size=Pt(9), italic=True)
     rows = [["Attack", "How a scanner produces it", "Recall (deployed)", "Recall (hardened)"]]
     for atk in c["adv"].index:
@@ -858,7 +887,7 @@ def appendices(doc, c):
                widths=[1.85, 2.5, 1.05, 1.05])
 
     p = doc.add_paragraph()
-    set_paragraph(p, "Table D2. What happens after a detection.", size=Pt(9), italic=True)
+    set_paragraph(p, "Table C2. What happens after a detection.", size=Pt(9), italic=True)
     rows = [["#", "Stage", "Action", "Automation"]]
     for _, r in c["flow"].iterrows():
         rows.append([int(r.step), r.stage, r.action, r.automation])
@@ -866,7 +895,7 @@ def appendices(doc, c):
                widths=[0.3, 0.95, 3.9, 1.3])
 
     p = doc.add_paragraph()
-    set_paragraph(p, "Table D3. What is written for every alert, so that decisions can be "
+    set_paragraph(p, "Table C3. What is written for every alert, so that decisions can be "
                      "audited and fed back.", size=Pt(9), italic=True)
     log = t_safe("logging_schema")
     if log is not None:
@@ -877,7 +906,7 @@ def appendices(doc, c):
                    widths=[2.2, 4.25])
 
     p = doc.add_paragraph()
-    set_paragraph(p, "Table D4. Privacy, retention and misuse controls (continuing Section 7).",
+    set_paragraph(p, "Table C4. Privacy, retention and misuse controls (continuing Section 7).",
                   size=Pt(9), italic=True)
     rows = [["Concern", "Test or safeguard", "Evidence / current finding", "Remaining action"]]
     for _, r in c["gov"].iloc[3:].iterrows():
@@ -886,7 +915,7 @@ def appendices(doc, c):
                widths=[1.1, 1.8, 1.9, 1.65])
 
     p = doc.add_paragraph()
-    set_paragraph(p, "Table D5. Remaining monitoring signals (continuing Section 8).",
+    set_paragraph(p, "Table C5. Remaining monitoring signals (continuing Section 8).",
                   size=Pt(9), italic=True)
     rows = [["Signal / metric", "Threshold or trigger", "Owner / response", "Feedback use"]]
     for _, r in c["plan"].iloc[4:].iterrows():

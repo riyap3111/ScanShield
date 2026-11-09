@@ -1,15 +1,16 @@
 """Step 8 (Deliverable 3): Model development, tuning and final scoring.
 
-Three genuinely different model families, all trained on the SAME stratified training split and
-the SAME primary feature set ('full' - every original column plus the engineered features):
+Four model families, all trained on the SAME stratified training split and the SAME primary
+feature set ('full' - every original column plus the engineered features):
 
-  1. Logistic regression        linear, the Deliverable 2 reference baseline
-  2. Random Forest              bagged trees, non-linear, handles interactions
-  3. Histogram Gradient Boosting  boosted trees, sequential error correction
+  1. Logistic regression          linear, the Deliverable 2 reference baseline
+  2. Random Forest                bagged trees, non-linear, handles interactions
+  3. Histogram Gradient Boosting  boosted trees, scikit-learn implementation
+  4. XGBoost                      boosted trees, the library named in the proposal
 
-Gradient boosting uses scikit-learn's histogram implementation rather than XGBoost: the XGBoost
-and LightGBM macOS wheels need an OpenMP runtime that is not installable in the course
-environment. It is the same histogram-based boosting algorithm family.
+XGBoost needs an OpenMP runtime that Apple does not ship. src/install_libomp.py fetches it from
+conda-forge into ~/.local/lib and src/xgb_support.py loads it before importing xgboost; if it is
+missing, XGBoost is skipped and the other three still run.
 
 Protocol
   tuning      RandomizedSearchCV, 5-fold StratifiedKFold, on the TRAINING split only,
@@ -45,6 +46,9 @@ from sklearn.metrics import (precision_score, recall_score, f1_score, roc_auc_sc
 
 from config import PROC_DIR, SPLIT_FILE, MET_DIR, TARGET, RANDOM_STATE, TARGET_RECALL, TARGET_FPR
 from utils import save_table, save_json, signed_log1p
+from xgb_support import load_xgboost
+
+XGB, XGB_NOTE = load_xgboost()
 
 MODEL_MATRIX = PROC_DIR / "model_matrix.parquet"
 MONDAY_MATRIX = PROC_DIR / "monday_matrix.parquet"
@@ -61,6 +65,7 @@ np.seterr(over="ignore", divide="ignore", invalid="ignore")
 
 N_ITER = 15
 CV_FOLDS = 5
+POS_WEIGHT = 1.353        # negatives/positives in the training split, for scale_pos_weight
 N_JOBS = 4          # fixed pool size; -1 oversubscribes and stalls on this machine
 SEEDS = [42, 7, 2024]
 PRIMARY_SET = "full"
@@ -76,7 +81,7 @@ def lr_pipeline(random_state=RANDOM_STATE):
 
 def model_space(random_state=RANDOM_STATE):
     """(estimator, search space, why this family) per model."""
-    return {
+    space = {
         "Logistic regression": (
             lr_pipeline(random_state),
             {"lr__C": loguniform(1e-3, 1e2)},
@@ -103,10 +108,27 @@ def model_space(random_state=RANDOM_STATE):
              "min_samples_leaf": randint(10, 60),
              "l2_regularization": uniform(0, 2.0),
              "class_weight": ["balanced"]},
-            "Boosted trees: fits residual errors in sequence, usually the strongest family on "
-            "tabular flow data, and the planned XGBoost stand-in.",
+            "Boosted trees: fits residual errors in sequence; scikit-learn's histogram "
+            "implementation.",
         ),
     }
+    if XGB is not None:
+        # scale_pos_weight is XGBoost's equivalent of balanced class weights.
+        space["XGBoost"] = (
+            XGB.XGBClassifier(tree_method="hist", n_jobs=1, random_state=random_state,
+                              eval_metric="aucpr", verbosity=0),
+            {"n_estimators": randint(150, 450),
+             "max_depth": randint(3, 10),
+             "learning_rate": loguniform(0.02, 0.3),
+             "subsample": uniform(0.6, 0.4),
+             "colsample_bytree": uniform(0.6, 0.4),
+             "min_child_weight": randint(1, 20),
+             "reg_lambda": uniform(0, 3.0),
+             "scale_pos_weight": [1.0, POS_WEIGHT]},
+            "The gradient-boosting library named in the proposal, with the histogram tree "
+            "method.",
+        )
+    return space
 
 
 def metrics_at(y, score, thr):
@@ -295,6 +317,7 @@ def main():
     save_table(sd, "seed_stability")
 
     save_json({"primary_feature_set": PRIMARY_SET, "n_features": len(cols),
+               "xgboost": XGB_NOTE if XGB is None else f"xgboost {XGB.__version__}: {XGB_NOTE}",
                "tuning": "RandomizedSearchCV, 5-fold StratifiedKFold, average precision, train split only",
                "threshold_rule": f"max F1 subject to validation FPR <= {TARGET_FPR}",
                "test_scored_once": True, "seeds": SEEDS,

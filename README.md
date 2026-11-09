@@ -59,6 +59,7 @@ python -m venv .venv && source .venv/bin/activate     # Windows: .venv\Scripts\a
 pip install -r requirements.txt
 # put the two CICIDS2017 CSVs in data/raw/ (see data/README.md), then:
 python data/prepare_raw.py                               # compresses + checks SHA256
+python src/install_libomp.py                             # only if XGBoost cannot import (see below)
 bash run_all.sh                                          # Windows without bash: run src/01…14 in order
 python reports/build_deliverable3.py                     # rebuilds the Status Report .docx
 ```
@@ -66,6 +67,10 @@ python reports/build_deliverable3.py                     # rebuilds the Status R
 All randomness uses `random_state = 42`. The scripts check the raw file against hand-verified facts (row count, label counts, duplicate count) and stop if anything differs. Steps 10 and 13 additionally need the other CICIDS2017 day files in `~/Desktop/CICIDS_dataset` (see [`data/README.md`](data/README.md)); without them those two steps skip themselves and the rest of the pipeline still runs.
 
 The hyperparameter search in step 08 is the slow part — budget roughly an hour on a laptop. Everything else runs in a few minutes.
+
+### XGBoost on macOS
+
+XGBoost's wheel links against `libomp.dylib`, which Apple does not ship. With Homebrew, `brew install libomp` is enough. Without it, `pip install zstandard && python src/install_libomp.py` downloads llvm-openmp from conda-forge, verifies its SHA256, and copies the library to `~/.local/lib`; [`src/xgb_support.py`](src/xgb_support.py) loads it before importing xgboost. Check status any time with `python src/install_libomp.py --check`. If the library is missing, step 08 skips XGBoost and the other three families still run.
 
 ## Pipeline
 
@@ -79,7 +84,7 @@ The hyperparameter search in step 08 is the slow part — budget roughly an hour
 ### Deliverable 3 (Interim Status Report)
 
 7. **07_feature_engineering**: keeps every original column and adds 28 engineered features (payload per packet, reply ratio, flag density, header-to-payload ratio, port class, burstiness). Builds the primary `full` set plus two diagnostic ablations, `original_only` and `no_fingerprint`.
-8. **08_train_models**: logistic regression, Random Forest and histogram gradient boosting. Each gets a 15-candidate randomised search with 5-fold stratified CV on the training split, scored by PR-AUC. The alert threshold is chosen on validation (highest F1 within the 5% FPR ceiling), frozen, and only then is the test split scored — once. Also runs the feature-set ablation and a three-seed stability check.
+8. **08_train_models**: logistic regression, Random Forest, scikit-learn histogram gradient boosting and XGBoost. Each gets a 15-candidate randomised search with 5-fold stratified CV on the training split, scored by PR-AUC. The alert threshold is chosen on validation (highest F1 within the 5% FPR ceiling), frozen, and only then is the test split scored — once. Also runs the feature-set ablation and a three-seed stability check.
 9. **09_evaluate**: comparison curves, confusion matrices and a structured error analysis (representative cases, grouped causes, port breakdown).
 10. **10_generalization**: schema-compatibility audit and scoring on all seven other CICIDS2017 day files — 2.5 M flows and twelve unseen attack types.
 11. **11_adversarial**: five evasion attacks (timing, payload padding, TCP-window reshaping, handshake mimicry, combined) and an adversarial-training defense.

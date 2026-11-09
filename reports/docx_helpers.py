@@ -140,6 +140,20 @@ def put_figure(table, image_path, width_inches=6.4):
     return para
 
 
+def figure_after(anchor_el, parent, image_path, cap_text, width_inches=6.2):
+    """Insert a centred figure plus its caption immediately after a table or paragraph."""
+    pic_p = OxmlElement("w:p")
+    anchor_el.addnext(pic_p)
+    para = Paragraph(pic_p, parent)
+    para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    para.paragraph_format.space_before = Pt(5)
+    para.paragraph_format.space_after = Pt(1)
+    para.add_run().add_picture(str(image_path), width=Inches(width_inches))
+    cap_p = OxmlElement("w:p")
+    pic_p.addnext(cap_p)
+    return caption(Paragraph(cap_p, parent), cap_text)
+
+
 def caption(paragraph, text):
     return set_paragraph(paragraph, text, size=Pt(8.5), italic=True, color=MUTED,
                          align=WD_ALIGN_PARAGRAPH.CENTER, space_after=Pt(10))
