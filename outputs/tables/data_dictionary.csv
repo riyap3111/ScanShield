@@ -77,4 +77,4 @@ Idle Mean,float64,numeric (continuous),Active/Idle,"Time flow was idle before go
 Idle Std,float64,numeric (continuous),Active/Idle,"Time flow was idle before going active, std (microseconds)",286467,13350,0.0,0.0,70500000.0,feature
 Idle Max,int64,numeric (discrete),Active/Idle,"Time flow was idle before going active, max (microseconds)",286467,6300,0.0,0.0,120000000.0,feature
 Idle Min,int64,numeric (discrete),Active/Idle,"Time flow was idle before going active, min (microseconds)",286467,13008,0.0,0.0,120000000.0,feature
-Label,str,categorical (binary),Target,Ground-truth class from CIC: BENIGN or PortScan,286467,2,,,,target
+Label,object,categorical (binary),Target,Ground-truth class from CIC: BENIGN or PortScan,286467,2,,,,target

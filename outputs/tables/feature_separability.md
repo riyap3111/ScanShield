@@ -29,13 +29,13 @@
 | Bwd IAT Mean                |           0.7917 | lower in PortScan  |          -0.111    | 0.111    |
 | Bwd IAT Min                 |           0.79   | lower in PortScan  |          -0.06663  | 0.06663  |
 | min_seg_size_forward        |           0.7715 | higher in PortScan |           0.4142   | 0.4142   |
-| Packet Length Variance      |           0.7683 | lower in PortScan  |          -0.2037   | 0.2037   |
 | Packet Length Std           |           0.7683 | lower in PortScan  |          -0.3267   | 0.3267   |
+| Packet Length Variance      |           0.7683 | lower in PortScan  |          -0.2037   | 0.2037   |
 | Fwd Header Length           |           0.7628 | lower in PortScan  |          -0.1403   | 0.1403   |
 | Total Length of Bwd Packets |           0.7613 | lower in PortScan  |          -0.05805  | 0.05805  |
 | Bwd Packet Length Max       |           0.7539 | lower in PortScan  |          -0.3033   | 0.3033   |
-| Avg Bwd Segment Size        |           0.7512 | lower in PortScan  |          -0.3428   | 0.3428   |
 | Bwd Packet Length Mean      |           0.7512 | lower in PortScan  |          -0.3428   | 0.3428   |
+| Avg Bwd Segment Size        |           0.7512 | lower in PortScan  |          -0.3428   | 0.3428   |
 | init_win_fwd_missing        |           0.7381 | lower in PortScan  |          -0.5277   | 0.5277   |
 | Fwd Packet Length Min       |           0.7343 | lower in PortScan  |          -0.3851   | 0.3851   |
 | Total Backward Packets      |           0.7333 | lower in PortScan  |          -0.09871  | 0.09871  |

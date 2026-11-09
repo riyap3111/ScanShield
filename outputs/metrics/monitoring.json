@@ -1,0 +1,93 @@
+{
+  "model": "Random Forest",
+  "threshold": 0.9726805399038232,
+  "psi_bands": {
+    "watch": 0.1,
+    "investigate": 0.25
+  },
+  "features_investigate": 37,
+  "features_watch": 25,
+  "alert_volume": [
+    {
+      "day": "Friday AM",
+      "flows_scored": 183819,
+      "benign_flows": 181871,
+      "benign_alerts": 0,
+      "alerts": 0,
+      "alerts_per_10k_flows": 0.0,
+      "median_alert_score": NaN,
+      "sampled_flows": 150000,
+      "max_feature_psi": 0.014432063602059793
+    },
+    {
+      "day": "Friday PM DDoS",
+      "flows_scored": 222974,
+      "benign_flows": 94979,
+      "benign_alerts": 0,
+      "alerts": 0,
+      "alerts_per_10k_flows": 0.0,
+      "median_alert_score": NaN,
+      "sampled_flows": 150000,
+      "max_feature_psi": 0.5679675603558413
+    },
+    {
+      "day": "Monday",
+      "flows_scored": 502138,
+      "benign_flows": 502138,
+      "benign_alerts": 0,
+      "alerts": 0,
+      "alerts_per_10k_flows": 0.0,
+      "median_alert_score": NaN,
+      "sampled_flows": 150000,
+      "max_feature_psi": 0.05833233027901119
+    },
+    {
+      "day": "Thursday AM",
+      "flows_scored": 163916,
+      "benign_flows": 161773,
+      "benign_alerts": 0,
+      "alerts": 0,
+      "alerts_per_10k_flows": 0.0,
+      "median_alert_score": NaN,
+      "sampled_flows": 150000,
+      "max_feature_psi": 0.012828915085092327
+    },
+    {
+      "day": "Thursday PM",
+      "flows_scored": 252437,
+      "benign_flows": 252402,
+      "benign_alerts": 971,
+      "alerts": 963,
+      "alerts_per_10k_flows": 38.13333333333333,
+      "median_alert_score": 0.9999984106090551,
+      "sampled_flows": 150000,
+      "max_feature_psi": 0.23164169727011194
+    },
+    {
+      "day": "Tuesday",
+      "flows_scored": 421123,
+      "benign_flows": 411979,
+      "benign_alerts": 0,
+      "alerts": 0,
+      "alerts_per_10k_flows": 0.0,
+      "median_alert_score": NaN,
+      "sampled_flows": 150000,
+      "max_feature_psi": 0.542926245087742
+    },
+    {
+      "day": "Wednesday",
+      "flows_scored": 609650,
+      "benign_flows": 416108,
+      "benign_alerts": 1,
+      "alerts": 8,
+      "alerts_per_10k_flows": 0.13333333333333333,
+      "median_alert_score": 0.9865963295714264,
+      "sampled_flows": 150000,
+      "max_feature_psi": 0.018362360244789124
+    }
+  ],
+  "median_alerts_per_day": 0.0,
+  "max_alerts_per_day": 963.0,
+  "quiet_days": 5,
+  "n_days": 7
+}

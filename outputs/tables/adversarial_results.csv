@@ -1,0 +1,10 @@
+attack,realisation,recall_under_attack,evasion_rate,scan_flows
+A0 No attack (clean scan flows),Reference: the scan flows exactly as captured,0.9986033519553073,0.0013966480446927498,13604
+"A1 Timing evasion, 10x slower",nmap -T2: probes spaced out by an order of magnitude,0.771023228462217,0.22897677153778295,13604
+"A1 Timing evasion, 100x slower",nmap -T1: roughly one probe per several seconds,0.02550720376359894,0.9744927962364011,13604
+"A1 Timing evasion, 1000x slower",nmap -T0: a scan paced over hours,7.350779182593354e-05,0.9999264922081741,13604
+"A2 Payload padding, 24 bytes",nmap --data-length 24: probes stop looking empty,0.0,1.0,13604
+"A2 Payload padding, 64 bytes",nmap --data-length 64: probes look like small requests,0.0,1.0,13604
+A3 TCP window reshaping,Scanner sets an everyday initial window instead of 1024,0.748897383122611,0.251102616877389,13604
+A4 Handshake mimicry (connect scan),nmap -sT: the connection is completed so a reply exists,0.0,1.0,13604
+A5 Combined (A1 100x + A2 + A3 + A4),All four levers used together: the strongest attack tested,0.0,1.0,13604

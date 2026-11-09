@@ -1,0 +1,9 @@
+step,rule,rows_before,rows_after,cols_before,cols_after,rows_removed,removed_by_label,rationale
+1,Strip whitespace from column names,692703,692703,79,79,0,,"Raw headers have leading spaces, which break name lookups"
+2,"Replace +/-inf with NaN, drop rows with any NaN",692703,691406,79,79,1297,"DoS Hulk: 949, BENIGN: 348","Inf/NaN come from zero-duration flows (division by 0 in Flow Bytes/s, Flow Packets/s); rate cannot be computed so the row is unusable"
+3,Drop rows with Flow Duration < 0 or Flow IAT Min < 0,691406,690657,79,79,749,"BENIGN: 581, DoS Hulk: 159, DoS GoldenEye: 5, Heartbleed: 4",Durations and inter-arrival times cannot be negative (clock/parsing errors in CICFlowMeter)
+4,Add binary flags for Init_Win_bytes_* == -1 (values kept),690657,690657,79,81,0,,"-1 means 'window not observed', not an error; dropping would remove 21% (fwd) to 27% (bwd) of PortScan-file rows. The flag lets models use 'missing' as information"
+5,Flag (keep) 18 redundant columns: 10 constant + 8 exact copies,690657,690657,81,81,0,,"Kept so the all-features models see every original column; excluded only from the reduced comparison feature set (e.g. Subflow Fwd Packets == Total Fwd Packets, Fwd PSH Flags == SYN Flag Count)"
+6,Remove exact duplicate rows (keep first) BEFORE splitting,690657,609744,81,81,80913,"DoS Hulk: 57277, BENIGN: 22947, DoS slowloris: 411, DoS Slowhttptest: 271, DoS GoldenEye: 7","Copies could land in both train and test, inflating scores (leakage)"
+7,Drop all rows whose identical feature-vector appears with both labels,609744,609650,81,81,94,"BENIGN: 47, DoS Hulk: 46, DoS slowloris: 1",Same input with two labels is label noise; no model can get both right
+8,Encode target: is_scan = 1 if PortScan else 0,609650,609650,81,82,0,,Binary target for classification

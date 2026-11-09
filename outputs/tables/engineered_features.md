@@ -1,0 +1,30 @@
+| feature                     | definition                                              | why_it_should_help                                   |   median_scan |   median_benign |
+|:----------------------------|:--------------------------------------------------------|:-----------------------------------------------------|--------------:|----------------:|
+| total_packets               | Total Fwd Packets + Total Backward Packets              | Overall flow size in one number                      |        2      |       4         |
+| total_bytes                 | Forward + backward payload bytes                        | Overall payload volume in one number                 |        8      |     231         |
+| bytes_per_fwd_packet        | Forward payload bytes / forward packets                 | A probe carries no payload; a real request does      |        0      |      38         |
+| bytes_per_bwd_packet        | Backward payload bytes / backward packets               | Separates an empty refusal from a real reply         |        6      |      86         |
+| fwd_bwd_packet_ratio        | Forward packets / (backward packets + 1)                | Scans talk and are not answered                      |        0.5    |       0.6667    |
+| download_ratio              | Backward bytes / (forward bytes + 1)                    | Normal clients mostly receive data                   |        2      |       1.775     |
+| no_response                 | 1 if the responder sent no packet at all                | A closed or filtered port returns nothing            |        0      |       0         |
+| is_empty_payload            | 1 if the flow carried zero payload bytes                | Probes carry no data in either direction             |        0      |       0         |
+| single_fwd_packet           | 1 if at most one forward packet was sent                | A SYN probe is one packet                            |        1      |       0         |
+| is_short_flow               | 1 if Flow Duration <= 1000 microseconds                 | Probes finish in microseconds                        |        1      |       0         |
+| duration_per_packet         | Flow Duration / total packets                           | Normalises duration by how much was sent             |       25      |       1.065e+04 |
+| flag_total                  | Sum of the eight TCP flag counters                      | How much TCP signalling the flow used                |        1      |       1         |
+| flags_per_packet            | flag_total / total packets                              | A probe is almost pure signalling, no data           |        0.5    |       0.01408   |
+| syn_only                    | 1 if SYN set and no ACK, FIN or PSH                     | Signature of a half-open SYN scan                    |        0      |       0         |
+| rst_present                 | 1 if any RST flag was seen                              | A closed port answers with RST                       |        0      |       0         |
+| header_bytes_per_fwd_packet | Forward header bytes / forward packets                  | Header-only traffic has no payload to amortise       |       34.67   |      23         |
+| header_to_payload_ratio     | Total header bytes / (total payload bytes + 1)          | Probes are nearly all header                         |        8.571  |       0.3989    |
+| win_ratio                   | Forward TCP window / (backward window + 1)              | An unanswered handshake leaves this lopsided         |     1024      |       0.06294   |
+| fwd_win_is_1024             | 1 if the initial forward TCP window is exactly 1024     | Value this scanner's SYN probes use                  |        0      |       0         |
+| iat_burstiness              | Flow IAT Std / (Flow IAT Mean + 1)                      | Automated probing is evenly paced, humans are bursty |        0      |       1.405     |
+| active_idle_ratio           | Active Mean / (Idle Mean + 1)                           | Probes are active briefly and never idle             |        0      |       0         |
+| pkt_len_cv                  | Packet Length Std / (Packet Length Mean + 1)            | Probes are uniform in size, real traffic varies      |        0.5329 |       0.5644    |
+| fwd_pkt_len_range           | Fwd Packet Length Max - Fwd Packet Length Min           | Zero when every forward packet is identical          |        0      |       0         |
+| bwd_pkt_len_range           | Bwd Packet Length Max - Bwd Packet Length Min           | Zero when there is no varied reply                   |        0      |       0         |
+| pkts_per_sec_ratio          | Fwd Packets/s / (Bwd Packets/s + 1)                     | Rate-based version of the reply imbalance            |        1      |       0.985     |
+| port_class                  | 0 well-known (<1024), 1 registered, 2 dynamic (>=49152) | Coarse port grouping that survives a new port list   |        1      |       0         |
+| is_well_known_port          | 1 if Destination Port < 1024                            | Most benign traffic goes to a handful of low ports   |        0      |       1         |
+| is_common_service_port      | 1 if the port is one of 15 everyday services            | Scanners spend most probes off this list             |        0      |       1         |

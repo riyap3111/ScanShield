@@ -1,0 +1,50 @@
+{
+  "selected_model": "Random Forest",
+  "threshold": 0.9726805399038232,
+  "test_FP": 0,
+  "test_FN": 19,
+  "causes": [
+    {
+      "error_type": "False positive",
+      "pattern": "Benign flow that received no reply at all",
+      "n": 0,
+      "share_of_errors": 0.0
+    },
+    {
+      "error_type": "False positive",
+      "pattern": "Benign flow carrying zero payload bytes",
+      "n": 0,
+      "share_of_errors": 0.0
+    },
+    {
+      "error_type": "False positive",
+      "pattern": "Benign flow shorter than 1 ms",
+      "n": 0,
+      "share_of_errors": 0.0
+    },
+    {
+      "error_type": "False negative",
+      "pattern": "Scan flow that did get a reply packet",
+      "n": 16,
+      "share_of_errors": 0.8421052631578947
+    },
+    {
+      "error_type": "False negative",
+      "pattern": "Scan flow carrying payload bytes",
+      "n": 10,
+      "share_of_errors": 0.5263157894736842
+    },
+    {
+      "error_type": "False negative",
+      "pattern": "Scan flow aimed at a common service port",
+      "n": 18,
+      "share_of_errors": 0.9473684210526315
+    },
+    {
+      "error_type": "False negative",
+      "pattern": "Scan flow lasting longer than 1 ms",
+      "n": 16,
+      "share_of_errors": 0.8421052631578947
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+field,purpose
+flow_id,Join the alert back to the raw flow record
+scored_at,"When the model saw it, for latency monitoring"
+"model_version, feature_set_version, threshold",Reproduce exactly which model made the call
+score,"Confidence, drives tiering and calibration checks"
+top_features,Per-alert explanation shown to the analyst
+"allowlist_status, allowlist_entry",Whether it was suppressed and by which approved entry
+"analyst_verdict, verdict_at, analyst_id",Ground-truth feedback and accountability
+"source_port_count_24h, unanswered_ratio_24h",Slow-scan context that per-flow scoring cannot see

@@ -1,0 +1,109 @@
+feature,max_psi_across_days,status
+fwd_bwd_packet_ratio,0.5679675603558413,investigate
+header_to_payload_ratio,0.542926245087742,investigate
+Bwd Packet Length Mean,0.5353564987329472,investigate
+Avg Bwd Segment Size,0.5353564987329472,investigate
+bytes_per_bwd_packet,0.5353564987329472,investigate
+Bwd Packet Length Max,0.5237397976864717,investigate
+Subflow Fwd Bytes,0.516479896940024,investigate
+Total Length of Fwd Packets,0.516479896940024,investigate
+Average Packet Size,0.4117231255586924,investigate
+Fwd Packet Length Max,0.3992024422779133,investigate
+Init_Win_bytes_forward,0.3985785083201727,investigate
+Subflow Bwd Packets,0.3903464329846054,investigate
+Total Backward Packets,0.3903464329846054,investigate
+total_packets,0.3832871126393849,investigate
+Subflow Bwd Bytes,0.3782205630377819,investigate
+Total Length of Bwd Packets,0.3782205630377819,investigate
+pkts_per_sec_ratio,0.3747387876341601,investigate
+download_ratio,0.36422216653817785,investigate
+flags_per_packet,0.35407940185557507,investigate
+Max Packet Length,0.3461160795595418,investigate
+Packet Length Mean,0.34123727555902944,investigate
+iat_burstiness,0.33201870631907504,investigate
+Init_Win_bytes_backward,0.3300840012083113,investigate
+Min Packet Length,0.3226322278053604,investigate
+port_class,0.3207709794832372,investigate
+Fwd Packet Length Min,0.3098778869505208,investigate
+Destination Port,0.3005717427026471,investigate
+Avg Fwd Segment Size,0.28873349643058116,investigate
+bytes_per_fwd_packet,0.28873349643058116,investigate
+Fwd Packet Length Mean,0.28873349643058116,investigate
+total_bytes,0.2832333570155325,investigate
+Fwd Packets/s,0.27305194433448077,investigate
+Bwd IAT Max,0.26734914514672825,investigate
+flag_total,0.2600731643417888,investigate
+win_ratio,0.25914454374239965,investigate
+Fwd Header Length.1,0.2556187166871271,investigate
+Fwd Header Length,0.2556187166871271,investigate
+Bwd IAT Mean,0.24113815439070846,watch
+Packet Length Std,0.2379704746266824,watch
+Packet Length Variance,0.2379704746266824,watch
+Bwd IAT Total,0.2306702831608717,watch
+Flow Duration,0.2165666222344839,watch
+Flow IAT Max,0.21132937197857837,watch
+Bwd IAT Std,0.21049888439907954,watch
+duration_per_packet,0.20676296204395195,watch
+Flow Packets/s,0.20662502853640413,watch
+Flow IAT Std,0.1944489726941878,watch
+Flow IAT Mean,0.194293203440744,watch
+Bwd Header Length,0.18511627493344163,watch
+Flow Bytes/s,0.18295430407451102,watch
+Bwd Packets/s,0.17672840345051227,watch
+header_bytes_per_fwd_packet,0.17580475667788456,watch
+Bwd Packet Length Min,0.14858231742041073,watch
+pkt_len_cv,0.14012891101027092,watch
+fwd_pkt_len_range,0.1397565746571623,watch
+Subflow Fwd Packets,0.13842377553421448,watch
+Total Fwd Packets,0.13842377553421448,watch
+Fwd Packet Length Std,0.13632334895604312,watch
+min_seg_size_forward,0.1314897017895785,watch
+act_data_pkt_fwd,0.11171015139415419,watch
+Fwd IAT Total,0.10539854132796958,watch
+Fwd IAT Mean,0.10351396380910412,watch
+Flow IAT Min,0.0926101052989464,stable
+Fwd IAT Max,0.0901851819633428,stable
+Fwd IAT Min,0.06126866715607352,stable
+Idle Mean,0.04849391263842043,stable
+Idle Max,0.03273936933214648,stable
+bwd_pkt_len_range,0.03000354734404246,stable
+Active Std,0.029524114504600515,stable
+Bwd Packet Length Std,0.029231772000263327,stable
+Bwd IAT Min,0.02275822917227776,stable
+Fwd IAT Std,0.01966478620442587,stable
+Idle Min,0.015918224531204183,stable
+Down/Up Ratio,0.015495733708547624,stable
+Active Min,0.005767770766589029,stable
+Active Max,0.005580808348627296,stable
+Idle Std,0.00451106884311858,stable
+active_idle_ratio,0.003885389755437685,stable
+Active Mean,0.003510904991606185,stable
+SYN Flag Count,0.0,stable
+is_well_known_port,0.0,stable
+is_empty_payload,0.0,stable
+is_short_flow,0.0,stable
+Bwd Avg Packets/Bulk,0.0,stable
+rst_present,0.0,stable
+no_response,0.0,stable
+Bwd Avg Bytes/Bulk,0.0,stable
+Bwd Avg Bulk Rate,0.0,stable
+init_win_fwd_missing,0.0,stable
+single_fwd_packet,0.0,stable
+syn_only,0.0,stable
+is_common_service_port,0.0,stable
+fwd_win_is_1024,0.0,stable
+init_win_bwd_missing,0.0,stable
+Bwd PSH Flags,0.0,stable
+RST Flag Count,0.0,stable
+Bwd URG Flags,0.0,stable
+CWE Flag Count,0.0,stable
+ECE Flag Count,0.0,stable
+FIN Flag Count,0.0,stable
+Fwd Avg Bulk Rate,0.0,stable
+Fwd Avg Bytes/Bulk,0.0,stable
+Fwd Avg Packets/Bulk,0.0,stable
+URG Flag Count,0.0,stable
+Fwd PSH Flags,0.0,stable
+Fwd URG Flags,0.0,stable
+PSH Flag Count,0.0,stable
+ACK Flag Count,0.0,stable

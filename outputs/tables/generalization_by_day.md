@@ -1,0 +1,9 @@
+| day            | description                                 |   rows_after_cleaning |   benign_flows |   benign_flagged |   benign_fpr | within_5pct_ceiling   |   attack_flows |   seconds |
+|:---------------|:--------------------------------------------|----------------------:|---------------:|-----------------:|-------------:|:----------------------|---------------:|----------:|
+| Monday         | All benign, Mon 3 Jul (outside-day control) |                502138 |         502138 |                0 |    0         | True                  |              0 |    12.02  |
+| Tuesday        | Benign + FTP/SSH brute force, Tue 4 Jul     |                421123 |         411979 |                0 |    0         | True                  |           9144 |     8.607 |
+| Wednesday      | Benign + DoS family + Heartbleed, Wed 5 Jul |                609650 |         416108 |                1 |    2.403e-06 | True                  |         193542 |    14.18  |
+| Thursday AM    | Benign + web attacks, Thu 6 Jul             |                163916 |         161773 |                0 |    0         | True                  |           2143 |     2.721 |
+| Thursday PM    | Benign + infiltration, Thu 6 Jul            |                252437 |         252402 |              971 |    0.003847  | True                  |             35 |     4.762 |
+| Friday AM      | Benign + botnet, Fri 7 Jul morning          |                183819 |         181871 |                0 |    0         | True                  |           1948 |     3.003 |
+| Friday PM DDoS | Benign + DDoS, Fri 7 Jul afternoon          |                222974 |          94979 |                0 |    0         | True                  |         127995 |     3.657 |

@@ -51,6 +51,33 @@ class Timer:
         self.s = time.perf_counter() - self.t
 
 
+def signed_log1p(X):
+    """Compress heavy tails while keeping sign (and the -1 window sentinel) meaningful.
+
+    This lives in utils, not in the training script, because it is pickled inside the logistic
+    regression pipeline: a function defined in __main__ cannot be unpickled by any other script.
+    """
+    X = np.asarray(X, dtype=float)
+    return np.sign(X) * np.log1p(np.abs(X))
+
+
+def select_model(tab_dir=None):
+    """The one place the selected model is decided, so every step agrees.
+
+    Selection is made on the VALIDATION split, never on test: the test split is scored once,
+    after both the threshold and the model choice are already fixed. Among models that meet the
+    operational ceiling, the highest F1 wins, with PR-AUC as the tie-break.
+    """
+    from config import TAB_DIR, TARGET_FPR
+    tab_dir = tab_dir or TAB_DIR
+    comp = pd.read_csv(tab_dir / "model_comparison.csv")
+    val = comp[comp.split == "validation"]
+    eligible = val[val.fpr <= TARGET_FPR]
+    if eligible.empty:
+        eligible = val
+    return eligible.sort_values(["f1", "pr_auc"], ascending=False).iloc[0]["model"]
+
+
 def feature_group(col):
     c = col.lower()
     if col == "Label": return "Target"

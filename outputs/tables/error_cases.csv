@@ -1,0 +1,9 @@
+split,error_type,model_score,Flow Duration,Total Fwd Packets,Total Backward Packets,Total Length of Fwd Packets,Total Length of Bwd Packets,SYN Flag Count,RST Flag Count,ACK Flag Count,Init_Win_bytes_forward,Init_Win_bytes_backward,Destination Port
+validation,False negative (scan missed),0.0001,9605093,10,9,1473,8558,0,0,0,29200,260,80
+validation,False negative (scan missed),0.0565,1839904,6,3,330,3525,0,0,0,29200,235,80
+validation,False negative (scan missed),0.1028,108259271,150,30,0,0,0,0,0,-1,-1,0
+validation,False negative (scan missed),0.1454,5018079,6,5,703,1413,0,0,0,29200,243,80
+test (locked),False negative (scan missed),0.3267,16009429,4,0,0,0,0,0,0,-1,-1,0
+test (locked),False negative (scan missed),0.347,3296671,3,1,0,0,0,0,0,29200,28960,80
+test (locked),False negative (scan missed),0.3879,5001169,3,1,0,0,0,0,0,29200,28960,80
+test (locked),False negative (scan missed),0.4133,5001744,3,1,0,0,0,0,0,29200,28960,80

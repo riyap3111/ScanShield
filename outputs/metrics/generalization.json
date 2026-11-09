@@ -1,0 +1,179 @@
+{
+  "model": "Random Forest",
+  "threshold": 0.9726805399038232,
+  "external_benign_flows": 2021250,
+  "external_benign_flagged": 972,
+  "external_benign_fpr": 0.00048089053803339517,
+  "by_day": [
+    {
+      "day": "Monday",
+      "description": "All benign, Mon 3 Jul (outside-day control)",
+      "rows_after_cleaning": 502138,
+      "benign_flows": 502138,
+      "benign_flagged": 0,
+      "benign_fpr": 0.0,
+      "within_5pct_ceiling": true,
+      "attack_flows": 0,
+      "seconds": 12.020236582999999
+    },
+    {
+      "day": "Tuesday",
+      "description": "Benign + FTP/SSH brute force, Tue 4 Jul",
+      "rows_after_cleaning": 421123,
+      "benign_flows": 411979,
+      "benign_flagged": 0,
+      "benign_fpr": 0.0,
+      "within_5pct_ceiling": true,
+      "attack_flows": 9144,
+      "seconds": 8.607474625
+    },
+    {
+      "day": "Wednesday",
+      "description": "Benign + DoS family + Heartbleed, Wed 5 Jul",
+      "rows_after_cleaning": 609650,
+      "benign_flows": 416108,
+      "benign_flagged": 1,
+      "benign_fpr": 2.4032222403799014e-06,
+      "within_5pct_ceiling": true,
+      "attack_flows": 193542,
+      "seconds": 14.181380459000003
+    },
+    {
+      "day": "Thursday AM",
+      "description": "Benign + web attacks, Thu 6 Jul",
+      "rows_after_cleaning": 163916,
+      "benign_flows": 161773,
+      "benign_flagged": 0,
+      "benign_fpr": 0.0,
+      "within_5pct_ceiling": true,
+      "attack_flows": 2143,
+      "seconds": 2.721180249999996
+    },
+    {
+      "day": "Thursday PM",
+      "description": "Benign + infiltration, Thu 6 Jul",
+      "rows_after_cleaning": 252437,
+      "benign_flows": 252402,
+      "benign_flagged": 971,
+      "benign_fpr": 0.003847037662142138,
+      "within_5pct_ceiling": true,
+      "attack_flows": 35,
+      "seconds": 4.761643499999998
+    },
+    {
+      "day": "Friday AM",
+      "description": "Benign + botnet, Fri 7 Jul morning",
+      "rows_after_cleaning": 183819,
+      "benign_flows": 181871,
+      "benign_flagged": 0,
+      "benign_fpr": 0.0,
+      "within_5pct_ceiling": true,
+      "attack_flows": 1948,
+      "seconds": 3.002680834000003
+    },
+    {
+      "day": "Friday PM DDoS",
+      "description": "Benign + DDoS, Fri 7 Jul afternoon",
+      "rows_after_cleaning": 222974,
+      "benign_flows": 94979,
+      "benign_flagged": 0,
+      "benign_fpr": 0.0,
+      "within_5pct_ceiling": true,
+      "attack_flows": 127995,
+      "seconds": 3.657421291999995
+    }
+  ],
+  "by_attack": [
+    {
+      "day": "Tuesday",
+      "attack_type": "FTP-Patator",
+      "flows": 5927,
+      "flagged_as_portscan": 0,
+      "flag_rate": 0.0
+    },
+    {
+      "day": "Tuesday",
+      "attack_type": "SSH-Patator",
+      "flows": 3217,
+      "flagged_as_portscan": 0,
+      "flag_rate": 0.0
+    },
+    {
+      "day": "Wednesday",
+      "attack_type": "DoS GoldenEye",
+      "flows": 10281,
+      "flagged_as_portscan": 0,
+      "flag_rate": 0.0
+    },
+    {
+      "day": "Wednesday",
+      "attack_type": "DoS Hulk",
+      "flows": 172642,
+      "flagged_as_portscan": 8,
+      "flag_rate": 4.633866614149512e-05
+    },
+    {
+      "day": "Wednesday",
+      "attack_type": "DoS Slowhttptest",
+      "flows": 5228,
+      "flagged_as_portscan": 0,
+      "flag_rate": 0.0
+    },
+    {
+      "day": "Wednesday",
+      "attack_type": "DoS slowloris",
+      "flows": 5384,
+      "flagged_as_portscan": 0,
+      "flag_rate": 0.0
+    },
+    {
+      "day": "Wednesday",
+      "attack_type": "Heartbleed",
+      "flows": 7,
+      "flagged_as_portscan": 0,
+      "flag_rate": 0.0
+    },
+    {
+      "day": "Thursday AM",
+      "attack_type": "Web Attack - Brute Force",
+      "flows": 1470,
+      "flagged_as_portscan": 0,
+      "flag_rate": 0.0
+    },
+    {
+      "day": "Thursday AM",
+      "attack_type": "Web Attack - Sql Injection",
+      "flows": 21,
+      "flagged_as_portscan": 0,
+      "flag_rate": 0.0
+    },
+    {
+      "day": "Thursday AM",
+      "attack_type": "Web Attack - XSS",
+      "flows": 652,
+      "flagged_as_portscan": 0,
+      "flag_rate": 0.0
+    },
+    {
+      "day": "Thursday PM",
+      "attack_type": "Infiltration",
+      "flows": 35,
+      "flagged_as_portscan": 0,
+      "flag_rate": 0.0
+    },
+    {
+      "day": "Friday AM",
+      "attack_type": "Bot",
+      "flows": 1948,
+      "flagged_as_portscan": 0,
+      "flag_rate": 0.0
+    },
+    {
+      "day": "Friday PM DDoS",
+      "attack_type": "DDoS",
+      "flows": 127995,
+      "flagged_as_portscan": 0,
+      "flag_rate": 0.0
+    }
+  ]
+}

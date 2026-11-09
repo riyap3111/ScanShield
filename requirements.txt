@@ -1,8 +1,20 @@
-pandas==3.0.5
-numpy==2.5.3
-scikit-learn==1.9.1
-scipy==1.18.1
-matplotlib==3.11.2
+# Exact versions every committed output was produced with (Python 3.9.6, macOS arm64).
+# Deliverable 2 was originally run on a newer stack; re-running it here changes point-biserial
+# correlations in the 13th decimal, swaps two equal-count ports in top_ports.csv, and renames
+# the Label dtype from "str" to "object". No reported figure changes.
+pandas==2.3.3
+numpy==2.0.2
+scikit-learn==1.6.1
+scipy==1.13.1
+matplotlib==3.9.4
 seaborn==0.13.2
-pyarrow==26.0.0
-tabulate>=0.9
+pyarrow==21.0.0
+joblib==1.5.3
+tabulate==0.9.0
+# Deliverable 3: SHAP explanations, report generation, tests
+shap==0.49.1
+python-docx==1.2.0
+pytest==8.4.2
+# XGBoost and LightGBM are deliberately absent: their macOS wheels need an OpenMP runtime
+# (libomp) that is not installable in the course environment, so src/08_train_models.py uses
+# scikit-learn's HistGradientBoostingClassifier for the boosting family instead.

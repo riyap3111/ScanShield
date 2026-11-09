@@ -1,0 +1,8 @@
+day,file,rows_raw,n_columns,encoding_needed,columns_identical_to_training_file,missing_columns,extra_columns,header_whitespace_stripped,labels_present
+Monday,Monday-WorkingHours.pcap_ISCX.csv,529918,79,utf-8,True,none,none,True,BENIGN
+Tuesday,Tuesday-WorkingHours.pcap_ISCX.csv,445909,79,utf-8,True,none,none,True,"BENIGN, FTP-Patator, SSH-Patator"
+Wednesday,Wednesday-workingHours.pcap_ISCX.csv,692703,79,utf-8,True,none,none,True,"BENIGN, DoS GoldenEye, DoS Hulk, DoS Slowhttptest, DoS slowloris, Heartbleed"
+Thursday AM,Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv,170366,79,utf-8,True,none,none,True,"BENIGN, Web Attack - Brute Force, Web Attack - Sql Injection, Web Attack - XSS"
+Thursday PM,Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv,288602,79,utf-8,True,none,none,True,"BENIGN, Infiltration"
+Friday AM,Friday-WorkingHours-Morning.pcap_ISCX.csv,191033,79,utf-8,True,none,none,True,"BENIGN, Bot"
+Friday PM DDoS,Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv,225745,79,utf-8,True,none,none,True,"BENIGN, DDoS"
