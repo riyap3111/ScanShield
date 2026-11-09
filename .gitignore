@@ -14,3 +14,5 @@ data/processed/
 # for the full set used in generalization testing). data/README.md gives the source and the
 # SHA256 of every file so a clone can verify its own copy.
 data/raw/
+# Word lock files
+~$*

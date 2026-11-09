@@ -30,7 +30,8 @@ def set_paragraph(paragraph, text, style="Normal", size=BODY_SIZE, italic=False,
     _clear(paragraph)
     try:
         paragraph.style = paragraph.part.document.styles[style]
-    except KeyError:
+    except (KeyError, AttributeError):
+        # Header and footer paragraphs live in their own part and have no document styles.
         pass
     run = paragraph.add_run(text)
     run.font.size = size

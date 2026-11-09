@@ -155,7 +155,7 @@ def fig5_ports_and_time(df):
     a3.set_xlabel("Position in file (20 equal bins, earliest -> latest)")
     a3.set_ylabel("% of flows that are PortScan")
     a3.set_title("(c) Scan share over file order (time proxy)", fontsize=11)
-    fig.suptitle("Port behaviour and when scans occur", fontweight="bold", fontsize=13)
+    fig.suptitle("Port behavior and when scans occur", fontweight="bold", fontsize=13)
     save_fig(fig, "fig5_ports_and_time")
     return dp, wk, share
 

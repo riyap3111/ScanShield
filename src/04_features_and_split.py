@@ -91,9 +91,9 @@ def main():
     # reduced_no_port: de-correlated subset (comparison only) to show whether pruning loses anything.
     port_feats = [PORT_COL, "is_well_known_port"]
     all_no_port = [c for c in df.columns if c not in NON_FEATURES and c not in port_feats]
-    behaviour = [c for c in all_no_port if c not in CONSTANT_COLS + DUPLICATE_COLS]
+    behavior = [c for c in all_no_port if c not in CONSTANT_COLS + DUPLICATE_COLS]
     train = df[(splits["strat_split"] == "train").values]
-    kept, log = select_features(train, behaviour)       # fit on stratified TRAIN only
+    kept, log = select_features(train, behavior)       # fit on stratified TRAIN only
     log = pd.concat([
         pd.DataFrame([{"feature": c, "decision": "reduced set: excluded (constant)", "train_auc": np.nan,
                        "reason": "Single value in raw file; kept in all-features sets"} for c in CONSTANT_COLS]),
@@ -111,11 +111,11 @@ def main():
     sets = {"all_no_port": all_no_port, "all_with_port": all_no_port + port_feats,
             "reduced_no_port": kept,
             "n_original_columns_used": len([c for c in all_no_port if not c.startswith("init_win_")]) + 1,
-            "n_candidates_for_reduction": len(behaviour),
+            "n_candidates_for_reduction": len(behavior),
             "corr_threshold": CORR_THRESHOLD, "fit_on": "stratified train split only"}
     save_json(sets, "feature_sets")
     print(f"all_no_port={len(all_no_port)}, all_with_port={len(all_no_port)+2}, reduced_no_port={len(kept)} "
-          f"(from {len(behaviour)} distinct candidates)")
+          f"(from {len(behavior)} distinct candidates)")
 
 
 if __name__ == "__main__":

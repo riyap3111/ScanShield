@@ -1,7 +1,7 @@
 """Step 7 (Deliverable 3): Feature engineering.
 
 Every original CICFlowMeter column is kept. This step only ADDS derived features that express
-scan behaviour as ratios and indicators the raw counts do not state directly (bytes per packet,
+scan behavior as ratios and indicators the raw counts do not state directly (bytes per packet,
 reply ratio, flag density, port class, burstiness). Nothing is removed.
 
 All engineered features are deterministic row-wise functions of the raw columns, so they can be
@@ -34,7 +34,7 @@ NON_FEATURES = {LABEL_COL, TARGET, "raw_row"}
 # Ports a normal client contacts constantly; a scanner sweeps far beyond them.
 COMMON_SERVICE_PORTS = {80, 443, 53, 22, 21, 25, 110, 143, 445, 139, 3389, 3306, 8080, 993, 995}
 
-# Columns that encode THIS scanner's tooling rather than scanning behaviour in general.
+# Columns that encode THIS scanner's tooling rather than scanning behavior in general.
 FINGERPRINT_COLS = [
     PORT_COL, "Init_Win_bytes_forward", "Init_Win_bytes_backward",
     "init_win_fwd_missing", "init_win_bwd_missing",

@@ -5,4 +5,4 @@ step,stage,action,automation
 4,Correlate,"Alerts are grouped per source host over 5 min, 1 h and 24 h windows; a source crossing 50 distinct ports with over 80% unanswered is escalated even if each flow scored low",Automatic (src/slow_scan.py)
 5,Human review,An analyst confirms or rejects. No automatic blocking at any tier: a false alarm must not be able to cut off a real user,"Human decision, required"
 6,Respond,"Confirmed external scan: rate-limit the source at the perimeter and open an incident. Confirmed internal scan: contact the owner and, if it is authorised testing (Scarfone et al., 2008), add a time-boxed allowlist entry",Human-initiated
-7,Feed back,"Every analyst verdict is stored with the flow and the score, forming the labelled pool the next model is trained and tested on","Automatic capture, human label"
+7,Feed back,"Every analyst verdict is stored with the flow and the score, forming the labeled pool the next model is trained and tested on","Automatic capture, human label"

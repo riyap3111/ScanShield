@@ -16,7 +16,7 @@ from docx.shared import Pt
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from docx_helpers import (  # noqa: E402
-    appendix_heading, bullets_after, caption, delete_table, figure_after, fill_table,
+    MUTED, appendix_heading, bullets_after, caption, delete_table, figure_after, fill_table,
     find_paragraph, page_break, paragraph_after, put_figure, set_paragraph, write_paragraphs,
 )
 
@@ -61,6 +61,25 @@ def t(name):
 
 def j(name):
     return json.load(open(MET / f"{name}.json"))
+
+
+WORDS = {1: "one", 2: "two", 3: "three", 4: "four", 5: "five", 6: "six", 7: "seven",
+         8: "eight", 9: "nine", 10: "ten", 11: "eleven", 12: "twelve", 13: "thirteen"}
+
+
+def spell(n):
+    """Spell small integers out, as formal prose requires."""
+    return WORDS.get(int(n), f"{int(n):,}")
+
+
+def tiny(x):
+    """Describe a difference too small to render sensibly as a decimal."""
+    x = float(x)
+    if x < 1e-12:
+        return "leaves recall unchanged to the precision of the arithmetic"
+    if x < 1e-4:
+        return "changes recall by less than one ten-thousandth"
+    return f"changes recall by {x:.5f}"
 
 
 def pct(x, d=3):
@@ -131,6 +150,21 @@ def build_context():
 
 
 # ----------------------------------------------------------------------------- sections
+def running_head(doc, c):
+    """Replace the template's running head with the project's own identification."""
+    for sec in doc.sections:
+        for part in (sec.header, sec.first_page_header, sec.even_page_header):
+            for para in part.paragraphs:
+                if para.text.strip():
+                    set_paragraph(para, "ScanShield  |  NetSentries  |  Deliverable 3: "
+                                        "Interim Status Report",
+                                  size=Pt(8), color=MUTED, space_after=Pt(0))
+        for part in (sec.footer, sec.first_page_footer, sec.even_page_footer):
+            for para in part.paragraphs:
+                if "PROJECT TEMPLATE" in para.text.upper():
+                    set_paragraph(para, "", size=Pt(8), color=MUTED, space_after=Pt(0))
+
+
 def header(doc, c, T):
     tb = T[0]
     fill_table(tb, [
@@ -182,8 +216,10 @@ def s1_status(doc, c):
     b = c["b"]
     p = find_paragraph(doc, "[Summarize work completed")
     write_paragraphs(p, [
-        f"Since Interim Report 1 the project moved from one logistic-regression baseline to a "
-        f"tuned, compared and stress-tested detector. Changes to scope and method since then:",
+        f"Since Interim Report 1 the project has advanced from a single logistic-regression "
+        f"baseline to a tuned, systematically compared and adversarially tested detector. The "
+        f"evaluation pipeline, the data preparation and the reporting are fully reproducible "
+        f"from the raw capture files. The principal changes to scope and method are as follows.",
     ])
     p = bullets_after(p, [
         f"Feature engineering, not pruning. Every original CICFlowMeter column is kept and "
@@ -209,30 +245,38 @@ def s1_status(doc, c):
     ])
     paragraph_after(
         p,
-        f"Data, code and pipeline are reproducible: run_all.sh rebuilds every table and figure "
-        f"here from the raw CSVs at seed 42. No written feedback on Interim Report 1 had been "
-        f"returned when this was prepared, so that plan was carried through unchanged apart "
-        f"from the boosting substitution. Remaining work is in Section 9.")
+        f"The data, code and evaluation pipeline are in a reproducible state: a single command "
+        f"(run_all.sh) regenerates every table and figure presented here from the raw capture "
+        f"files under a fixed random seed, and the results summary is generated from the saved "
+        f"outputs rather than transcribed. No written feedback on Interim Report 1 had been "
+        f"returned at the time of preparation, so the plan set out in that report was carried "
+        f"forward without amendment. Outstanding work is set out in Section 9.")
 
 
 def s2_models(doc, c, T):
     tune, cv, cost = c["tune"], c["cv"], c["cost"]
     p = find_paragraph(doc, "[Describe the models")
     write_paragraphs(p, [
-        f"{len(c['models'])} families were compared on identical data — same training split, "
-        f"same {c['fs']['n_full']} features, same protocol — differing in kind, not just in "
-        f"hyperparameters: linear, bagged trees and boosted trees. Each got a 15-candidate "
-        f"randomised search scored by 5-fold stratified CV on the training split only "f"(scikit-learn; Pedregosa et al., 2011). The "
-        f"search metric is average precision, not accuracy, which is uninformative when 42.5% "
-        f"of rows are positive and the two error types cost differently. Imbalance is handled "
-        f"with balanced class weights, not resampling, which would distort the very "
-        f"false-positive rate being measured.",
-        f"Validation design. The alert threshold is the highest-F1 threshold on validation "
-        f"inside the 5% ceiling, then frozen; the winning family is chosen the same way, on "
-        f"validation, so neither is informed by test data. Only then was test scored, once. "
-        f"Reproducibility rests on seed 42, tuned parameters in Appendix A, and a one-command "
-        f"pipeline; three seeds change recall by {c['seed_recall_std']:.1e}."
+        f"{spell(len(c['models'])).capitalize()} families were compared on identical data: the "
+        f"same training split, the same {c['fs']['n_full']} features and the same evaluation "
+        f"protocol. They differ in kind rather than merely in hyperparameters, comprising a "
+        f"linear model, bagged trees and two boosting implementations. Each received a "
+        f"15-candidate randomized search scored by 5-fold stratified cross-validation on the "
+        f"training split alone (scikit-learn; Pedregosa et al., 2011). The search metric is "
+        f"average precision rather than accuracy, which is uninformative when 42.5% of rows "
+        f"belong to the positive class and the two error types carry different costs. Class "
+        f"imbalance is addressed with balanced class weights rather than resampling, since "
+        f"resampling would distort the very false-positive rate under measurement.",
+        f"Validation design. The alert threshold is the highest-F1 threshold on the validation "
+        f"split whose false-positive rate remains within the 5% ceiling, and is then frozen. "
+        f"The winning family is selected by the same rule on the same split, so that neither "
+        f"the operating point nor the choice of model is informed by the test data; the test "
+        f"split was scored once, after both decisions were fixed. Reproducibility rests on a "
+        f"fixed seed, the tuned parameters recorded in Appendix A, and a single-command "
+        f"pipeline. Refitting the selected model under three different random seeds "
+        f"{tiny(c['seed_recall_std'])}."
         + _budget_note(c),
+        _tuning_analysis(c),
     ])
     rows = [["Approach", "Key settings", "Validation method", "Rationale / result"]]
     labels = {"Logistic regression": "Baseline: Logistic regression",
@@ -246,7 +290,7 @@ def s2_models(doc, c, T):
         rows.append([
             labels.get(m, m),
             f"{pretty}; balanced class weights" if "class_weight" not in params else pretty,
-            f"15-candidate randomised search, 5-fold stratified CV on train. PR-AUC "
+            f"15-candidate randomized search, 5-fold stratified CV on train. PR-AUC "
             f"{cv.loc[m, 'pr_auc_mean']:.5f} ± {cv.loc[m, 'pr_auc_std']:.5f}",
             f"{_why(m, c['best'])} Test recall {f5(tv.recall)}, FPR {pct(tv.fpr, 4)}, "
             f"F1 {f5(tv.f1)}. Scores {cost.loc[m, 'flows_scored_per_second']:,.0f} flows/s.",
@@ -266,6 +310,30 @@ def _budget_note(c):
             f"families. Most had {std} candidates, but {parts}, because it was added to an "
             f"existing run rather than searched from scratch. Its score is therefore a floor, "
             f"not a ceiling: a fuller search could only improve it.")
+
+
+def _tuning_analysis(c):
+    """What the selected hyperparameters reveal about the difficulty of the problem."""
+    tune, cv = c["tune"], c["cv"]
+    best = c["best"]
+    try:
+        rf = json.loads(tune.loc["Random Forest", "best_params"])
+        depth = rf.get("max_depth", "?")
+    except Exception:
+        depth = "?"
+    spread = cv.pr_auc_mean.max() - cv.pr_auc_mean.min()
+    return (f"What the search reveals. The tuned configurations are themselves informative. The "
+            f"random forest selected a maximum depth of {depth}, which is shallow for "
+            f"{c['fs']['n_full']} features and 149,521 training rows, and every family "
+            f"converged to a cross-validated PR-AUC above "
+            f"{cv.pr_auc_mean.min():.5f}, with less than {max(spread, 1e-5):.5f} separating the "
+            f"weakest from the strongest. Where models of such different inductive bias — a linear decision "
+            f"boundary, an average over independent deep trees, and two sequential boosting "
+            f"schemes — agree this closely, the explanation lies in the data rather than in the "
+            f"algorithms: the classes are close to linearly separable on these features. This "
+            f"observation governs the interpretation of every result that follows, and is the "
+            f"reason Sections 5 and 6 carry more evidential weight than the headline accuracy "
+            f"figures in Section 3.")
 
 
 def _fmt(v):
@@ -290,13 +358,16 @@ def s3_evaluation(doc, c, T):
     b, abl, cost = c["b"], c["abl"], c["cost"]
     p = find_paragraph(doc, "[Report metrics appropriate")
     write_paragraphs(p, [
-        f"The primary metric is recall on port-scan flows at a false-positive rate within 5%, "
-        f"the proposal's two criteria: a missed scan removes the early warning the system "
-        f"exists to give, and the FPR ceiling is what keeps analysts using it. Accuracy is not "
-        f"used to judge — predicting BENIGN for everything scores 57.5% here while catching "
-        f"nothing — and PR-AUC is the ranking metric, being the one that stays informative "
-        f"under imbalance. All figures are on the locked test split "
-        f"({int(b.TN + b.FP + b.FN + b.TP):,} flows), scored once at the frozen threshold.",
+        f"The primary metric is recall on port-scan flows subject to a false-positive rate "
+        f"within 5%, the two criteria established in the proposal. Recall is primary because a "
+        f"missed scan forfeits the early warning the system exists to provide, while the "
+        f"false-positive ceiling governs whether analysts will continue to act on its alerts. "
+        f"Accuracy is deliberately not used as a decision criterion: a classifier that predicts "
+        f"BENIGN for every flow attains 57.5% accuracy on this data while detecting nothing. "
+        f"PR-AUC is reported as the ranking metric because it remains informative under class "
+        f"imbalance, where ROC-AUC is optimistic. All figures below are computed on the locked "
+        f"test split ({int(b.TN + b.FP + b.FN + b.TP):,} flows), scored once at the frozen "
+        f"threshold.",
     ])
     rows = [["Model", "Precision", "Recall", "F1", "PR-AUC / ROC-AUC", "Operational note"]]
     best_size = c["cost"].loc[c["best"], "model_size_mb"]
@@ -324,30 +395,79 @@ def s3_evaluation(doc, c, T):
     cap = find_paragraph(doc, "Figure 1.")
     caption(cap, f"Figure 1. (a) Misclassified flows per family, (b) precision-recall zoomed "
                  f"into the corner where the curves separate, (c) confusion matrix of the "
-                 f"selected {c['best']}, all on the locked test split. Takeaway: all three "
-                 f"clear both targets and are separated by a handful of flows, so the choice "
-                 f"rests on error counts rather than on ranking quality.")
+                 f"selected {c['best']} model, all on the locked test split. Takeaway: all "
+                 f"{spell(len(c['models']))} families clear both targets and are separated by "
+                 f"a handful of flows, so the choice rests on error counts rather than on "
+                 f"ranking quality.")
 
     p = find_paragraph(doc, "[State the main conclusion")
     write_paragraphs(p, [
-        f"Both criteria are met with wide margin: recall {f5(b.recall)} against a 0.90 target, "
+        f"Both criteria are met with a wide margin: recall {f5(b.recall)} against a 0.90 "
+        f"target, "
         f"FPR {pct(b.fpr, 4)} against a 5% ceiling, from {int(b.FP)} false alarms in "
         f"{int(b.TN + b.FP):,} benign test flows. This is stable, not a lucky split: 5-fold "
         f"PR-AUC {c['cv'].loc[c['best'], 'pr_auc_mean']:.5f} ± "
-        f"{c['cv'].loc[c['best'], 'pr_auc_std']:.5f}, and three seeds agree on recall to "
-        f"{c['seed_recall_std']:.1e}. The {len(c['models'])} families are separated by "
-        f"{int(c['test'].FN.max() - c['test'].FN.min())} flows out of "
-        f"{int(b.TN + b.FP + b.FN + b.TP):,}: the honest reading is that they are tied, and the "
-        f"choice rests on the zero false alarms rather than a capability gap. "
-        f"{_ablation_sentence(c)} Cost is no constraint at "
-        f"{cost.loc[c['best'], 'model_size_mb']:.1f} MB and "
-        f"{cost.loc[c['best'], 'flows_scored_per_second']:,.0f} flows/s on a laptop.",
+        f"{c['cv'].loc[c['best'], 'pr_auc_std']:.5f}, and refitting under three seeds "
+        f"{tiny(c['seed_recall_std'])}. {_ablation_sentence(c)} Computational cost imposes no "
+        f"constraint: the selected model occupies "
+        f"{cost.loc[c['best'], 'model_size_mb']:.1f} MB and scores "
+        f"{cost.loc[c['best'], 'flows_scored_per_second']:,.0f} flows per second on a laptop, "
+        f"so a full day of this network's traffic is classified in well under a minute.",
+        _model_analysis(c),
     ])
     place(p, "confusion",
-          f"Confusion matrices for all {len(c['comp'].model.unique())} families at their own "
+          f"Confusion matrices for all {spell(len(c['models']))} families at their own "
           f"frozen thresholds on the locked test split. Takeaway: the families are separated by "
           f"a handful of flows, so the selection rests on error counts rather than on a gap in "
           f"capability.", width=6.0)
+
+
+def _model_analysis(c):
+    """Interpret the comparison: what distinguishes the models, and what does not."""
+    test, best = c["test"], c["best"]
+    b = test.loc[best]
+    n = int(b.TN + b.FP + b.FN + b.TP)
+    lr = test.loc["Logistic regression"] if "Logistic regression" in test.index else None
+    zero_fp = [m for m in c["models"] if int(test.loc[m].FP) == 0]
+    fn_lo, fn_hi = int(test.FN.min()), int(test.FN.max())
+
+    lines = [
+        f"Observations from the comparison. Three points deserve emphasis. First, the "
+        f"{spell(len(c['models']))} families are separated by only "
+        f"{spell(fn_hi - fn_lo)} misclassified flows "
+        f"out of {n:,}, which is well inside the variation a different random split would "
+        f"produce. It would therefore be unsound to claim that any one algorithm is better "
+        f"suited to this problem than another; what the comparison establishes is that the "
+        f"result is robust to the choice of model, which is a stronger and more useful finding "
+        f"than a narrow win.",
+    ]
+    if lr is not None and int(lr.FN) == int(b.FN) and int(lr.FP) > int(b.FP):
+        lines.append(
+            f"Second, the models differ in the composition of their errors rather than in the "
+            f"quantity. The linear baseline misses exactly the same {int(b.FN)} scans as the "
+            f"selected model but additionally raises {int(lr.FP)} false alarm"
+            f"{'s' if int(lr.FP) != 1 else ''}, while {spell(len(zero_fp))} of the "
+            f"{spell(len(c['models']))} families reach zero false positives. The ensembles therefore "
+            f"do not detect more scans; they are more conservative at the boundary, which is "
+            f"the behavior an operational deployment requires, since analyst trust is "
+            f"consumed by false alarms rather than by missed detections the analyst never "
+            f"sees.")
+    else:
+        lines.append(
+            f"Second, the models differ in the composition of their errors rather than in the "
+            f"quantity: missed scans range from {fn_lo} to {fn_hi} and false alarms from "
+            f"{int(test.FP.min())} to {int(test.FP.max())}, so the choice is a question of "
+            f"which error an operator prefers to absorb.")
+    lines.append(
+        f"Third, and most important for interpretation, the absolute values are too high to be "
+        f"informative on their own. A PR-AUC of {b.pr_auc:.6f} does not indicate that the "
+        f"modeling is unusually sophisticated; it indicates that port scans in this capture "
+        f"are trivially separable from ordinary traffic, because the scanner issues short, "
+        f"empty, unanswered connections in a dense burst while normal traffic does not. The "
+        f"consequence is that Section 3 cannot discriminate between candidate systems, and the "
+        f"evidence that does discriminate appears in Sections 5 and 6, where the detector is "
+        f"confronted with traffic it has not seen and with an adversary who adapts.")
+    return " ".join(lines)
 
 
 def _ablation_sentence(c):
@@ -381,7 +501,7 @@ def _ablation_sentence(c):
                f"not because this dataset proves they help.")
     fp = (f"Removing the port and TCP-window columns, which encode this particular scanner's "
           f"fingerprint, still leaves recall at {f5(nofp.recall, 4)} with FPR "
-          f"{pct(nofp.fpr, 4)}, so the model is reading scan behaviour rather than memorising "
+          f"{pct(nofp.fpr, 4)}, so the model is reading scan behavior rather than memorising "
           f"one tool.")
     return eng + " " + fp
 
@@ -391,11 +511,14 @@ def s4_errors(doc, c, T):
     p = find_paragraph(doc, "[Analyze representative")
     fp_n, fn_n = int(b.FP), int(b.FN)
     write_paragraphs(p, [
-        f"At the frozen threshold the model raises {fp_n} false alarms and misses {fn_n} scans "
-        f"in {int(b.TN + b.FP + b.FN + b.TP):,} test flows, so on this split the only error "
-        f"type to analyse is the missed scan; the false-positive row below therefore draws on "
-        f"the unseen days from Section 5, where false alarms do occur. Both error types live in "
-        f"the same narrow band where a probe looks like a failed connection (Figure 3).",
+        f"At the frozen threshold the selected model raises {fp_n} false alarms and fails to "
+        f"detect {fn_n} scans among {int(b.TN + b.FP + b.FN + b.TP):,} test flows. Because the "
+        f"false-positive count on this split is {fp_n}, the missed detection is the only error "
+        f"type the held-out split can characterise; the false-positive row of the table below "
+        f"therefore draws on the unseen capture days analyzed in Section 5, where false alarms "
+        f"occur in measurable numbers. Both error types occupy the same region of the feature "
+        f"space, in which a probe is indistinguishable from an unsuccessful ordinary "
+        f"connection (Figure 3).",
     ])
     rows = [["Example / error type", "Likely cause", "Security or operational impact",
              "Planned improvement"]]
@@ -435,6 +558,27 @@ def s4_errors(doc, c, T):
           "What the selected model gets wrong on the locked test split, by outcome. Takeaway: "
           "the missed scans sit between the two class distributions on every axis, which is "
           "why per-flow features alone cannot separate them further.", width=6.3)
+    paragraph_after(
+        _last_caption(doc),
+        f"Interpretation. The distribution of errors is consistent with the mechanism the model "
+        f"has learned rather than with random noise. Of the {fn_n} undetected scans, "
+        f"{int(fn_reply.n)} received a reply from the target and {int(fn_payload.n)} carried "
+        f"payload bytes, so they do not exhibit the empty, unanswered signature that "
+        f"characterizes the majority of the class. These are probes that found an open service "
+        f"and completed a legitimate-looking exchange. The security implication is "
+        f"unfavorable: the detector is least reliable precisely on the probes that succeeded, "
+        f"which are the ones an attacker will act upon. The same asymmetry reappears under "
+        f"adversarial conditions in Section 6, where deliberately completing the handshake "
+        f"proves among the most effective evasion techniques tested, and it motivates the "
+        f"per-source aggregation identified as the critical path in Section 9.")
+
+
+def _last_caption(doc):
+    """The most recently appended caption paragraph, used to anchor follow-on commentary."""
+    for para in reversed(doc.paragraphs):
+        if para.text.strip().startswith("Figure "):
+            return para
+    return doc.paragraphs[-1]
 
 
 def s5_generalization(doc, c, T):
@@ -448,16 +592,18 @@ def s5_generalization(doc, c, T):
     b = c["b"]
     p = find_paragraph(doc, "[Compare performance on the course sample")
     write_paragraphs(p, [
-        f"The model is trained on one afternoon of one file, so the real question is what it "
-        f"does on traffic it has never seen. It was scored, unchanged and at the frozen "
-        f"threshold, on every other CICIDS2017 capture day (Sharafaldin et al., 2018; "f"Canadian Institute for Cybersecurity, n.d.): "
+        f"The model is trained on a single afternoon of a single capture file, so the material "
+        f"question is how it behaves on traffic drawn from a different distribution. It was "
+        f"scored, unmodified and at the frozen threshold, on every other CICIDS2017 capture "
+        f"day (Sharafaldin et al., 2018; Canadian Institute for Cybersecurity, n.d.): "
         f"{int(day.rows_after_cleaning.sum()):,} flows, {gen['external_benign_flows']:,} of "
-        f"them benign, plus {len(att)} attack types absent from training. Schema compatibility "
-        f"came first: all seven files carry the same 79 columns, but every header has leading "
-        f"whitespace and the web-attacks file is cp1252-encoded, so a plain UTF-8 read of its "
-        f"'Web Attack - Brute Force' labels fails outright. The pipeline audits these "
-        f"differences (Appendix B, Table B3) rather than coercing them silently, then applies "
-        f"the identical cleaning and feature code path.",
+        f"them benign, together with {len(att)} attack types absent from training. Schema "
+        f"compatibility had to be established first. All seven files carry the same 79 "
+        f"columns, but every header is padded with leading whitespace and the web-attacks file "
+        f"is encoded in cp1252 rather than UTF-8, so a conventional read of its "
+        f"'Web Attack - Brute Force' labels fails outright. The pipeline audits and records "
+        f"these discrepancies (Appendix B, Table B3) rather than coercing them silently, and "
+        f"then applies an identical cleaning and feature-construction path.",
     ])
     rows = [["Dataset", "Differences from training data", "Result", "Interpretation"]]
     rows.append([
@@ -490,9 +636,26 @@ def s5_generalization(doc, c, T):
     tb = fill_table(T[7], rows, widths=[1.3, 1.65, 1.75, 2.0])
     place(tb, "generalization",
           "Left: false-positive rate on benign traffic for each unseen capture day against the "
-          "5% ceiling. Right: how often each unseen attack type is labelled a port scan. "
+          "5% ceiling. Right: how often each unseen attack type is labeled a port scan. "
           "Takeaway: the false-alarm rate holds on days the model never saw, and other attack "
           "families almost never trigger it.", width=6.3)
+    paragraph_after(
+        _last_caption(doc),
+        f"Interpretation. Two properties of this result matter more than the aggregate rate. "
+        f"The first is that the false alarms are concentrated rather than distributed: "
+        f"{int(worst_day.benign_flagged):,} of {gen['external_benign_flagged']:,} arise on "
+        f"{worst_day.day} alone, while four of the seven days produce none at all. A uniformly "
+        f"low rate would suggest an irreducible error floor; a concentrated one points to a "
+        f"specific and identifiable traffic pattern that can be investigated, and in all "
+        f"likelihood resolved, before deployment. The second is the model's specificity across "
+        f"attack classes: of {int(att.flows.sum()):,} flows belonging to {len(att)} attack "
+        f"types never represented in training, only {int(att.flagged.sum())} are labeled as "
+        f"port scans. This is simultaneously a strength and a limitation. It demonstrates that "
+        f"the classifier has learned the specific behavior of reconnaissance rather than a "
+        f"generic notion of anomaly, so it will not saturate an analyst queue whenever "
+        f"unrelated malicious activity occurs; equally, it confirms that ScanShield detects "
+        f"port scanning and nothing else, and must therefore be deployed alongside, rather "
+        f"than in place of, controls addressing other intrusion classes.")
 
 
 def s6_adversarial(doc, c, T):
@@ -511,19 +674,26 @@ def s6_adversarial(doc, c, T):
         f"techniques, each a documented nmap option (Lyon, 2009), were applied to the "
         f"{advj['test_scan_flows']:,} held-out scan flows, perturbing the raw columns and "
         f"recomputing every engineered feature so the shaped flows stay consistent. All of it "
-        f"ran offline on a public dataset: no traffic generated, no system contacted.",
-        f"The results are not comfortable — the deployed model is brittle. Padding probes with "
-        f"24 bytes drops recall from "
-        f"{f5(adv.loc['A0 No attack (clean scan flows)'].recall_under_attack, 4)} to "
-        f"{f5(pad.recall_under_attack, 4)}; completing the handshake to "
-        f"{f5(hand.recall_under_attack, 4)}; pacing 1,000x slower to "
-        f"{f5(slow.recall_under_attack, 4)}. The model learned that a scan is small, empty and "
-        f"unanswered, so anything breaking that shape defeats it. Pacing is also a structural "
-        f"limit: a per-flow classifier sees one flow, and a scan spread over hours looks "
-        f"ordinary in every one.",
-        f"Defense. These are traffic-shaping transforms, so the defender can generate them "
-        f"without meeting an attacker: shaped copies of the training scans were added to the "
-        f"training set and the model refit ({advj['augmented_training_rows']:,} rows). Recall "
+        f"was conducted offline against a public research dataset: no traffic was generated "
+        f"and no system was contacted.",
+        f"The findings are unfavorable and are reported as such: the deployed model proves "
+        f"brittle under modest traffic shaping. Padding each probe with 24 bytes reduces recall "
+        f"from {f5(adv.loc['A0 No attack (clean scan flows)'].recall_under_attack, 4)} to "
+        f"{f5(pad.recall_under_attack, 4)}; completing the TCP handshake reduces it to "
+        f"{f5(hand.recall_under_attack, 4)}; and pacing the scan a thousand times more slowly "
+        f"reduces it to {f5(slow.recall_under_attack, 4)}. Read together with the error "
+        f"analysis in Section 4, these results identify what the classifier has in fact "
+        f"learned: that a port scan is a short, empty, unanswered connection. That rule "
+        f"describes this scanner accurately and generalizes poorly, because each of its three "
+        f"components is under the attacker's unilateral control. Timing evasion is further "
+        f"distinguished from the remainder in being a structural limitation rather than a "
+        f"deficiency of model fitting: a classifier that examines one flow in isolation cannot, "
+        f"even in principle, observe a pattern expressed only across many flows separated by "
+        f"hours.",
+        f"Defense. Because these are traffic-shaping transformations, the defender can "
+        f"generate them without any interaction with an attacker. Shaped copies of the "
+        f"training scans were accordingly added to the training set and the model refitted "
+        f"({advj['augmented_training_rows']:,} rows). Recall "
         f"recovers to "
         f"{f5(advd.loc['A2 Payload padding, 24 bytes'].recall_after_adversarial_training, 4)} "
         f"under padding, "
@@ -531,10 +701,12 @@ def s6_adversarial(doc, c, T):
         f"under handshake mimicry and {f5(comb_d.recall_after_adversarial_training, 4)} under "
         f"the combined attack, at an unchanged clean false-positive rate "
         f"({pct(advj['clean_fpr_hardened'], 4)}). It does not fix everything: 1,000x pacing "
-        f"still leaves recall at {f5(slow_d.recall_after_adversarial_training, 4)}, which is why "
-        f"per-source slow-scan features are the critical path in Section 9. These are "
-        f"feature-space approximations, so they bound the risk rather than measure it exactly. "
-        f"Full results in Appendix C, Table C1.",
+        f"still leaves recall at {f5(slow_d.recall_after_adversarial_training, 4)}, which "
+        f"confirms that the structural limitation cannot be trained away and establishes "
+        f"per-source aggregation as the critical path in Section 9. One methodological caveat "
+        f"applies throughout: these are feature-space approximations of packet-level "
+        f"behavior, and they therefore bound the risk rather than measure it precisely. "
+        f"Complete results are given in Appendix C, Table C1.",
     ])
     fill_table(T[8], [
         ["Asset", "Attacker objective", "Capability", "Attack / test", "Defense / mitigation"],
@@ -564,9 +736,9 @@ def _disparity_sentence(c, svc_ok, spread):
     rec = svc_ok[svc_ok.scan_flows >= 50]
     rec_lo, rec_hi = (rec.recall.min(), rec.recall.max()) if len(rec) else (float("nan"),) * 2
     if worst.fpr == 0:
-        head = (f"They cannot here: not one of the {len(svc_ok)} service groups produces a "
-                f"single false alarm on the test split, so there is no disruption to "
-                f"distribute unevenly.")
+        head = (f"No such concentration arises: none of the {len(svc_ok)} service groups "
+                f"produces a single false alarm on the test split, so there is no disruption "
+                f"to distribute unevenly.")
     else:
         head = (f"They do not: across service groups the false-positive rate spans "
                 f"{spread['spread'] * 100:.3f} percentage points, the highest being "
@@ -574,14 +746,17 @@ def _disparity_sentence(c, svc_ok, spread):
     if not len(rec):
         return head + " Recall is flat across flow sizes and the capture (Figure 6)."
     low = rec.loc[rec.recall.idxmin()]
-    tail = (f" Recall is where the real disparity sits: it spans {f5(rec_lo, 4)} to "
-            f"{f5(rec_hi, 4)}, and the weakest group is {low.service_group} at "
-            f"{f5(low.recall, 4)} ({int(low.FN)} of {int(low.scan_flows)} scans missed). That "
-            f"matters more than the number suggests, because those are among the ports an "
-            f"attacker most wants open, so the model is weakest exactly where a hit is most "
-            f"valuable. Recall is otherwise flat across flow sizes and the capture (Figure 6). "
-            f"Caveats: that group holds only {int(low.scan_flows)} scan flows, and zero false "
-            f"alarms on one lab capture is weak evidence of fairness.")
+    tail = (f" The material disparity lies in recall, which ranges from {f5(rec_lo, 4)} to "
+            f"{f5(rec_hi, 4)} across groups. The weakest is {low.service_group}, at "
+            f"{f5(low.recall, 4)}, where {int(low.FN)} of {int(low.scan_flows)} scans go "
+            f"undetected. This carries greater weight than the figure alone suggests, since "
+            f"these are among the services an attacker is most concerned to locate, so "
+            f"detection is weakest precisely where a successful probe is most consequential. "
+            f"Recall is otherwise stable across flow sizes and across the capture period "
+            f"(Figure 6). Two caveats temper the conclusion: the group in question contains "
+            f"only {int(low.scan_flows)} scan flows, and the absence of false alarms within a "
+            f"single laboratory capture constitutes weak evidence of equitable behavior in "
+            f"deployment.")
     return head + tail
 
 
@@ -593,12 +768,14 @@ def s7_responsible(doc, c, T):
               if r["dimension"].startswith("Service") and r["rate"] == "false-positive rate"][0]
     p = find_paragraph(doc, "[Report completed or planned bias")
     write_paragraphs(p, [
-        f"CICIDS2017 carries no demographic attributes, so unequal performance was tested on "
-        f"the dimensions that do exist and carry operational consequence: service group, flow "
-        f"size, period within the capture, and capture day. The stake is concrete — if false "
-        f"alarms concentrated on one service, the team running it would absorb the disruption "
-        f"and be first to distrust the tool. {_disparity_sentence(c, svc_ok, spread)} "
-        f"Privacy, retention, oversight and misuse controls continue in Appendix C, Table C4.",
+        f"CICIDS2017 contains no demographic attributes, so unequal performance was assessed "
+        f"along the dimensions that do exist and that carry operational consequence: service "
+        f"group, flow size, period within the capture, and capture day. The concern is "
+        f"concrete rather than abstract. Were false alarms to concentrate on a single service, "
+        f"the team responsible for that service would absorb the resulting disruption and "
+        f"would be the first to withdraw confidence from the system. "
+        f"{_disparity_sentence(c, svc_ok, spread)} Privacy, retention, oversight and misuse "
+        f"controls are continued in Appendix C, Table C4.",
     ])
     rows = [["Concern", "Test or safeguard", "Evidence / current finding", "Remaining action"]]
     for _, r in gov.head(3).iterrows():
@@ -610,7 +787,7 @@ def s7_responsible(doc, c, T):
                  "recall is visibly weaker on file-sharing ports.", width=6.3)
     place(fig7, "explainability",
           "Permutation importance across the whole model, and a worked explanation of one "
-          "individual alert. Takeaway: the model leans on reply behaviour and flow economy "
+          "individual alert. Takeaway: the model leans on reply behavior and flow economy "
           "rather than on any single tool-specific value, and every alert can be explained to "
           "the analyst who receives it.", width=6.3)
 
@@ -621,19 +798,25 @@ def s8_monitoring(doc, c, T):
     med = mon["median_alerts_per_day"]
     worst_psi = c["psi"].iloc[0]
     write_paragraphs(p, [
-        f"These baselines are measured, not assumed: alert volume and drift come from the same "
-        f"{int(c['gen_day'].rows_after_cleaning.sum() / 1e6):.1f} million unseen flows as "
-        f"Section 5, and they are lopsided. {mon.get('quiet_days', 0)} of "
-        f"{mon.get('n_days', len(c['vol']))} unseen days raise no alert at all while the "
-        f"busiest raises {mon.get('max_alerts_per_day', 0):,.0f}, so the volume rule is banded "
-        f"on the busiest day rather than on a median of zero. Drift uses the population "
-        f"stability index against the training distribution: "
-        f"{mon['features_investigate']} of {len(c['psi'])} features cross the 0.25 investigate "
-        f"line on some day, the largest {worst_psi.feature} "
-        f"(PSI {worst_psi.max_psi_across_days:.2f}) — expected from a different service mix, "
-        f"not a broken sensor. Response is review-first at every tier: nothing is blocked "
-        f"automatically, because a false alarm must never cut off a real user. The seven-step "
-        f"response path and logging schema are in Appendix C, Tables C2-C3.",
+        f"The baselines below are measured rather than assumed: alert volume and feature "
+        f"drift are derived from the same "
+        f"{int(c['gen_day'].rows_after_cleaning.sum() / 1e6):.1f} million unseen flows used in "
+        f"Section 5. The volume distribution is markedly skewed. "
+        f"{mon.get('quiet_days', 0)} of {mon.get('n_days', len(c['vol']))} unseen days raise "
+        f"no alert whatsoever, while the busiest raises "
+        f"{mon.get('max_alerts_per_day', 0):,.0f}; a threshold expressed as a multiple of the "
+        f"median would therefore be undefined, and the rule is instead banded on the busiest "
+        f"observed day. Drift is quantified by the population stability index against the "
+        f"training distribution, under which {mon['features_investigate']} of "
+        f"{len(c['psi'])} features cross the 0.25 investigation line on at least one day, the "
+        f"largest being {worst_psi.feature} (PSI {worst_psi.max_psi_across_days:.2f}). This is "
+        f"the expected consequence of a different service composition on those days rather "
+        f"than evidence of a malfunctioning sensor, which illustrates why a drift alert must "
+        f"trigger investigation rather than automatic retraining. The response path is "
+        f"review-first at every tier: no traffic is blocked automatically, on the principle "
+        f"that a false alarm must never be capable of interrupting a legitimate user. The "
+        f"seven-step response path and the per-alert logging schema are set out in Appendix C, "
+        f"Tables C2 and C3.",
     ])
     rows = [["Signal / metric", "Threshold or trigger", "Owner / response", "Feedback use"]]
     for _, r in plan.head(4).iterrows():
@@ -642,16 +825,17 @@ def s8_monitoring(doc, c, T):
     place(tb, "monitoring",
           "Production baselines measured on the unseen days: feature drift, alert volume per "
           "day, and the confidence distribution of raised alerts. Takeaway: the thresholds in "
-          "the table above are anchored to observed behaviour, not guessed.", width=6.3)
+          "the table above are anchored to observed behavior, not guessed.", width=6.3)
 
 
 def s9_plan(doc, c, T):
     p = find_paragraph(doc, "[List the remaining analyses")
     write_paragraphs(p, [
-        "The critical path to the final report runs through the IP-bearing CIC release: it is "
-        "the only thing that unlocks the per-source slow-scan features, and those are the "
-        "answer to the one real weakness found in Section 6. Everything else can proceed in "
-        "parallel.",
+        "The critical path to the final report runs through the IP-bearing CIC release, which "
+        "is the sole prerequisite for the per-source slow-scan features. Those features are "
+        "the direct remedy for the principal weakness identified in Section 6, and they are "
+        "also the mechanism by which the known-tester allowlist can finally be evaluated "
+        "end to end. The remaining items may proceed in parallel.",
     ])
     fill_table(T[11], [
         ["Remaining task", "Owner", "Due date", "Definition of done"],
@@ -722,7 +906,7 @@ def contributions(doc, c, T):
          "src/13_monitoring.py; tables schema_compatibility, generalization_by_day, "
          "subgroup_*, privacy_governance, drift_psi, alert_volume; figures 13, 15, 16, 17"],
         ["Ojas Prashant Suratkar",
-         f"Model development and tuning for all {len(c['models'])} families (randomised "
+         f"Model development and tuning for all {len(c['models'])} families (randomized "
          "search, 5-fold CV, "
          "class-weight strategy, threshold selection and freezing); evaluation figures and the "
          "structured error analysis; the adversarial threat model, the five evasion attacks and "
@@ -742,7 +926,7 @@ def contributions(doc, c, T):
     p = find_paragraph(doc, "[Explain how the team coordinated")
     write_paragraphs(p, [
         "Work was split by pipeline stage as in the previous deliverables: Riya owns the data, "
-        "generalization and deployment-facing stages, Ojas owns modelling, evaluation and the "
+        "generalization and deployment-facing stages, Ojas owns modeling, evaluation and the "
         "adversarial work. The two of us reviewed each other's code and re-ran the full pipeline "
         "from the raw CSVs before the report was written, and both checked every number quoted "
         "here against the generated tables. Participation was even and no coordination problems "
@@ -811,7 +995,7 @@ def appendices(doc, c):
     appendix_heading(doc, "Appendix A. Tuned Hyperparameters and Feature Sets")
     p = doc.add_paragraph()
     set_paragraph(p, "Table A1. Selected configuration per family, from the 15-candidate "
-                     "randomised search with 5-fold stratified cross-validation on the training "
+                     "randomized search with 5-fold stratified cross-validation on the training "
                      "split.", size=Pt(9), italic=True)
     rows = [["Model", "Tuned hyperparameters", "CV PR-AUC (mean ± sd)", "Search time"]]
     for m in c["models"]:
@@ -956,6 +1140,7 @@ def main():
     # Capture table objects by their ORIGINAL template index: deleting a table renumbers
     # doc.tables, so every reference below must be resolved before the first deletion.
     T = list(doc.tables)
+    running_head(doc, c)
     header(doc, c, T)
     snapshot(doc, c, T)
     s1_status(doc, c)

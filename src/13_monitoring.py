@@ -150,7 +150,7 @@ def main():
                                  "scoring 0.50-0.70 doubles",
          "owner_and_response": "ML owner reviews calibration; borderline alerts mean the "
                                "boundary has moved",
-         "feedback_use": "Triggers threshold re-selection on fresh labelled data"},
+         "feedback_use": "Triggers threshold re-selection on fresh labeled data"},
         {"signal": "Analyst-confirmed precision",
          "threshold_or_trigger": "Confirmed-true rate on sampled alerts falls below 90% "
                                  "over a rolling 2 weeks",
@@ -203,7 +203,7 @@ def main():
          "automation": "Human-initiated"},
         {"step": 7, "stage": "Feed back",
          "action": "Every analyst verdict is stored with the flow and the score, forming the "
-                   "labelled pool the next model is trained and tested on",
+                   "labeled pool the next model is trained and tested on",
          "automation": "Automatic capture, human label"},
     ])
     save_table(workflow, "response_workflow")

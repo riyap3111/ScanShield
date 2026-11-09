@@ -43,5 +43,5 @@ def per_source_window_features(flows: pd.DataFrame) -> pd.DataFrame:
 
 
 def flag_slow_scanners(feats: pd.DataFrame, min_ports_24h: int = 50, min_failed: float = 0.8) -> pd.Series:
-    """Simple starting rule (to be tuned on labelled data): many distinct ports in 24 h, mostly failed."""
+    """Simple starting rule (to be tuned on labeled data): many distinct ports in 24 h, mostly failed."""
     return (feats["distinct_ports_24h"] >= min_ports_24h) & (feats["failed_ratio_24h"] >= min_failed)

@@ -7,7 +7,7 @@ capture days containing twelve attack types the model has never seen.
 Two questions are answered separately:
   1. False alarms. On benign traffic from days that were never trained on, does the
      false-positive rate stay inside the 5% operational ceiling?
-  2. Cross-attack behaviour. Does a port-scan detector fire on DoS, brute force, botnet,
+  2. Cross-attack behavior. Does a port-scan detector fire on DoS, brute force, botnet,
      infiltration or web attacks? Those flows are not port scans, so a flag is a false positive
      for this label, but it is operationally different from flagging ordinary traffic.
 

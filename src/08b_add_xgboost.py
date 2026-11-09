@@ -2,7 +2,7 @@
 
 Step 08 trains every family in one pass. This script exists so XGBoost can be added to an
 existing run without repeating the Random Forest search, which is the expensive part. It uses
-the same protocol as step 08 - randomised search, 5-fold stratified CV on the training split,
+the same protocol as step 08 - randomized search, 5-fold stratified CV on the training split,
 threshold chosen on validation, test split scored once afterwards - but with a smaller search
 budget, which is recorded in the n_candidates column so the comparison stays honest.
 

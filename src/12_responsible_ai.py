@@ -281,7 +281,7 @@ def main():
          "evidence": f"Top driver: {imp.iloc[0].feature}; every alert ships with its "
                      "top contributing features",
          "remaining_action": "Put the per-alert explanation into the dashboard"},
-        {"concern": "Privacy and data minimisation",
+        {"concern": "Privacy and data minimization",
          "test_or_safeguard": "Flow metadata only: no payload read or stored, no user "
                               "identity needed, and this release holds no IPs",
          "evidence": "All 108 features are counts, sizes, timings and flag totals",

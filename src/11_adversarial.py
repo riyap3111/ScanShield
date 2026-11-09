@@ -215,7 +215,7 @@ def main():
     hardened.fit(X_aug, y_aug)
     joblib.dump(hardened, MODEL_DIR / f"{best.lower().replace(' ', '_')}_hardened.joblib")
 
-    # clean behaviour must not degrade
+    # clean behavior must not degrade
     s_ben = hardened.predict_proba(test_benign[cols])[:, 1]
     s_scan = hardened.predict_proba(test_scan[cols])[:, 1]
     hardened_clean_fpr = float((s_ben >= thr).mean())
